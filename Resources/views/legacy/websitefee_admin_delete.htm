@@ -1,0 +1,15 @@
+{*  $Id: websitefee_admin_delete.htm,v 1.10 2005/01/26 10:03:25 markwest Exp $  *}
+{include file="websitefee_admin_main.htm"}
+<form class="pn-adminform" action="{$formURL}" method="post" enctype="application/x-www-form-urlencoded">
+<div>
+    <input type="hidden" name="authid" value="{pnsecgenauthkey module="WebsiteFee"}" />
+    <input type="hidden" name="confirmation" value="1" />
+    <input type="hidden" name="id" value="{$id|pnvarprepfordisplay}" />
+	<div class="pn-adminformrow">
+		<label for="example_submit">{gt text="Are you sure you want to delete this item?"}</label>
+		<input id="example_submit" name="submit" type="submit" value="{gt text="Delete"}" />
+	</div>
+	<div style="clear:both"></div>
+</div>
+</form>
+<a href="{modurl modname="WebsiteFee" type="admin" func="viewsubs"}">{gt text="Cancel"}</a>

@@ -1,0 +1,3 @@
+websitefeemodule:
+    resource: "@PaustianWebsiteFeeModule/Controller"
+    type:     annotation

@@ -1,0 +1,22 @@
+/* 
+This is an example of a module stylesheet. It is used to hold css definitions used within the module templates
+
+The stylesheet will be used by xanthia themes assuming the tag <!--[modulestylesheet]--> is in the header of the
+page templates. Other theme types will automatically make use of this as the header_footer module templates have this
+tag.
+
+A module stylesheet can be overrriden by a theme by creating a copy of the stylesheet in 
+themes/<theme name>/style/<module>/style.css.
+
+To avoid clashes with other css definitions it's best to use the module name within module class and id names
+
+All styles in this stylesheet should be considered as examples only not recommendations of styling to be used 
+within a module
+*/
+
+/* This style adds a black dotted border around the place holder for the list of items held by the module */
+div.example_itemlist {
+	margin-top: 5px;
+	border: 1px dotted black;
+}
+

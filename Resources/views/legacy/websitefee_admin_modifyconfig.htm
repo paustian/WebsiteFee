@@ -1,0 +1,12 @@
+{*  $Id: websitefee_admin_modifyconfig.htm,v 1.11 2005/01/26 09:57:27 markwest Exp $  *}
+{include file="websitefee_admin_menu.htm"}
+<h2>{gt text="_MODIFYCONFIG"}</h2>
+<form class="pn-adminform" action="{modurl modname="websitefee" type="admin" func="updateconfig"}" method="post" enctype="application/x-www-form-urlencoded">
+<div>
+	<input type="hidden" name="authid" value="{pnsecgenauthkey module="websitefee"}" />
+	<div class="pn-adminformrow">
+	<input name="submit" type="submit" value="{gt text="Update Configuration"}" />
+	</div>
+	<div style="clear:both"></div>
+</div>
+</form>

@@ -1,0 +1,23 @@
+{
+    "name": "paustian/WebsiteFee",
+    "description": "Module for recieving instant payment notifications from Paypal",
+    "type": "zikula-module",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Timothy Paustian",
+            "homepage": "http://www.microbiologytext.com/"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Paustian\\WebsiteFeeModule\\": "" }
+    },
+    "require": {
+        "php": ">5.4.0"
+    },
+    "extra": {
+        "zikula": {
+            "class": "Paustian\\WebsiteFeeModule\\PaustianWebsiteFeeModule"
+        }
+    }
+}
