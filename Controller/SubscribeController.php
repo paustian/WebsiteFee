@@ -75,7 +75,11 @@ class SubscribeController extends AbstractController {
      */
     public function testsubscribeAction(Request $request) {
       
-         return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
+        //only allow admin access to this as it is a test page.
+        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_ADMIN)) {
+            throw new AccessDeniedException();
+        } 
+        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
     }
 
 
