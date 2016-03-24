@@ -318,4 +318,3 @@ class AdminController extends AbstractController {
 
 }
 
-?>

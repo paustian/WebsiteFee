@@ -124,4 +124,3 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
     }
 }
 
-?>

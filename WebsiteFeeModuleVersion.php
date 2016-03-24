@@ -38,4 +38,3 @@ class WebsiteFeeModuleVersion extends \Zikula_AbstractVersion
 
 }
 
-?>
