@@ -53,7 +53,7 @@ class AdminController extends AbstractController {
      */
     public function indexAction() {
         // Security check
-        if (!SecurityUtil::checkPermission('WebsiteFee::', '::', ACCESS_ADMIN)) {
+        if (!$this->hasPermission('WebsiteFee::', '::', ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
         return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_index.html.twig');
@@ -73,7 +73,7 @@ class AdminController extends AbstractController {
     public function editAction(Request $request, WebsiteFeeSubsEntity $subscriber = null) {
         // Security check - important to do this as early as possible to avoid
         // potential security holes or just too much wasted processing
-        if (!SecurityUtil::checkPermission('WebsiteFee::', '::', ACCESS_ADD)) {
+        if (!$this->hasPermission('WebsiteFee::', '::', ACCESS_ADD)) {
             throw new AccessDeniedException();
         }
 
@@ -116,7 +116,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifyAction(Request $request) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -147,7 +147,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifytransAction(Request $request) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -178,7 +178,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifyerrsAction(Request $request) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -210,7 +210,7 @@ class AdminController extends AbstractController {
      * @param        confirmation   confirmation that this item can be deleted
      */
     public function deleteAction(Request $request, WebsiteFeeSubsEntity $subscriber) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         //This code should never be reached, but I added it anyway, just in case.
@@ -237,7 +237,7 @@ class AdminController extends AbstractController {
      * @return type
      */
     public function deletetransAction(Request $request, WebsiteFeeTransEntity $transaction = null) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         //This code should never be reached, but I added it anyway, just in case.
@@ -279,7 +279,7 @@ class AdminController extends AbstractController {
      * @param WebsiteFeeErrorsEntity $error
      */
     public function deleteerrorAction(Request $request, WebsiteFeeErrorsEntity $error = null) {
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         $em = $this->getDoctrine()->getManager();

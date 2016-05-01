@@ -57,7 +57,7 @@ class SubscribeController extends AbstractController {
      */
     public function indexAction() {
         //securtiy check first
-        if (!SecurityUtil::checkPermission('quickcheck::', '::', ACCESS_OVERVIEW)) {
+        if (!$this->hasPermission('quickcheck::', '::', ACCESS_OVERVIEW)) {
             throw new AccessDeniedException();
         }
 
@@ -76,7 +76,7 @@ class SubscribeController extends AbstractController {
     public function testsubscribeAction(Request $request) {
       
         //only allow admin access to this as it is a test page.
-        if (!SecurityUtil::checkPermission('WebsiteFee::', "::", ACCESS_ADMIN)) {
+        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         } 
         return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
