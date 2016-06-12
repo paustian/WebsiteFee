@@ -4,7 +4,9 @@
  *  PayPal IPN Listener
  *
  *  A class to listen for and handle Instant Payment Notifications (IPN) from 
- *  the PayPal server.
+ *  the PayPal server. I modified the code from that provided by Micah.
+ * This update to the code points at the new paypal sites and should conform
+ * to the new IPN protocol that PayPal is implmenting in Fall of 2016
  *
  *  https://github.com/Quixotix/PHP-PayPal-IPN
  *
@@ -22,7 +24,7 @@ class IpnListener {
 
     /**
      *  If true, the recommended cURL PHP library is used to send the post back 
-     *  to PayPal. If flase then fsockopen() is used. Default true.
+     *  to PayPal. If false then fsockopen() is used. Default true.
      *
      *  @var boolean
      */

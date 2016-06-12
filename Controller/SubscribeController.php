@@ -41,19 +41,18 @@ use DateTime;
 use Exception;
 use System;
 
+/**
+ * This controller is for managing subscriptions with paypal. There is no admin or user interaction with
+ * it and you don't really need to change the code at all.
+ */
 class SubscribeController extends AbstractController {
 
     /**
      * @Route("")
      * 
-     * view
-     * This routine allows for the user to perform the only function, creating a
-     * quiz.
-     * Using all (or a subset of) the questions available, create a multiple choice
-     * quiz.
      *
      * Params: none
-     * Returns: the quiz. This can be graded by the gradequiz funciton below
+     * Returns: nothing
      */
     public function indexAction() {
         //securtiy check first
@@ -75,16 +74,15 @@ class SubscribeController extends AbstractController {
      */
     public function testsubscribeAction(Request $request) {
       
-        //only allow admin access to this as it is a test page.
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_ADMIN)) {
-            throw new AccessDeniedException();
-        } 
-        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
+        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
+        //return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
     }
 
 
     /**
      * @Route("/subscribepaypal")
+     * 
+     * This it the routine that actually communicates with PayPal and manages the subscriptions
      * @param Request $request
      */
     public function subscribepaypalAction(Request $request) {          
@@ -120,7 +118,7 @@ class SubscribeController extends AbstractController {
             if ($this->_enterTransaction($uid, $txn_id, $payer_email, $payment_date, $req, $res, $reciever_email, $payment_gross, $item_no, $txn_type)) {
                 if ($txn_type === 'subscr_cancel') {
                     $this->_cancelSubscription($uid, $item_no);
-                } else if ($txn_type === 'subscr_payment' && $payment_status === 'Completed') {
+                } else if ( ($txn_type === 'subscr_payment' && $payment_status === 'Completed') || ($txn_type == 'web_accept')) {
                     //Paypal sends 3 message upon purchase. We only want to add the subscription 
                     //when the transaction is completed.
                     $this->_addSubscription($uid, $item_no);
@@ -132,12 +130,6 @@ class SubscribeController extends AbstractController {
             $req = $listener->getPostUri();
             $this->_set_error($req, $res, $payment_date, "Transaction not verified");
         }
-    }
-    private function _writetofile($inText){
-        $basedir = System::serverGetVar('DOCUMENT_ROOT');
-        $handle = fopen($basedir . '/6th_ed/userdata/ipnlog.txt', 'w');        
-        $result = fwrite($handle, $inText);
-        fclose($handle);
     }
     
     private function _cancelSubscription($uid, $item_no) {
@@ -164,6 +156,7 @@ class SubscribeController extends AbstractController {
         } else {
             ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'removeuser', array('gid' => $gid, 'uid' => $uid));
         }
+        UserUtil::setUserByUid($uid);
     }
 
     /**
@@ -236,7 +229,8 @@ class SubscribeController extends AbstractController {
         }
         
         $payment_amt = $subscript_info->getWsfpaymentamount();
-        if ($payment_gross == -1) {
+        //I added a range because Paypal was being cute and adding tax
+        if ( ($payment_gross == -1) || ((($payment_amt - 2) < $payment_gross) && (($payment_amt + 2) > $payment_gross)) ) {
             $payment_gross = $payment_amt;
         }
        
@@ -277,7 +271,7 @@ class SubscribeController extends AbstractController {
         $query = $qb->getQuery();
         $the_item = $query->getResult();
 
-        if ($the_item === false) {
+        if ( empty($the_item)) {
             throw new NotFoundHttpException($this->__('Unable to get subscriber.'));
         }
         return $the_item[0];
