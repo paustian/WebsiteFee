@@ -73,11 +73,19 @@ class SubscribeController extends AbstractController {
      * @return       output       The main module page
      */
     public function testsubscribeAction(Request $request) {
-      
+
         return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
         //return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
     }
 
+    /**
+     * @Route("/testupdategroup")
+     */
+    public function testupdategroupAction(Request $request) {
+        //This is a test function to try to debug update group
+        $this->_updateGroup('3', '3');
+        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
+    }
 
     /**
      * @Route("/subscribepaypal")
@@ -85,7 +93,7 @@ class SubscribeController extends AbstractController {
      * This it the routine that actually communicates with PayPal and manages the subscriptions
      * @param Request $request
      */
-    public function subscribepaypalAction(Request $request) {          
+    public function subscribepaypalAction(Request $request) {
         $listener = new IpnListener();
         $payment_date = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($payment_date);
@@ -118,7 +126,7 @@ class SubscribeController extends AbstractController {
             if ($this->_enterTransaction($uid, $txn_id, $payer_email, $payment_date, $req, $res, $reciever_email, $payment_gross, $item_no, $txn_type)) {
                 if ($txn_type === 'subscr_cancel') {
                     $this->_cancelSubscription($uid, $item_no);
-                } else if ( ($txn_type === 'subscr_payment' && $payment_status === 'Completed') || ($txn_type == 'web_accept')) {
+                } else if (($txn_type === 'subscr_payment' && $payment_status === 'Completed') || ($txn_type == 'web_accept')) {
                     //Paypal sends 3 message upon purchase. We only want to add the subscription 
                     //when the transaction is completed.
                     $this->_addSubscription($uid, $item_no);
@@ -131,32 +139,82 @@ class SubscribeController extends AbstractController {
             $this->_set_error($req, $res, $payment_date, "Transaction not verified");
         }
     }
-    
+
     private function _cancelSubscription($uid, $item_no) {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
-        
-        $this->_updateGroup($uid, $gid, false);
+
+        if (!$this->_modifyUser($uid, $gid, false, $e)) {
+            //write an error to the error log;
+            $this->_set_error($req, $res, $payment_date, "Unable to cancel subscription: $e");
+        }
     }
 
     private function _addSubscription($uid, $item_no) {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
-        $this->_updateGroup($uid, $gid);
+        if (!$this->_modifyUser($uid, $gid, true, $e)) {
+            //write an error to the error log;
+            $this->_set_error($req, $res, $payment_date, "Unable to add subscription: $e");
+        }
     }
 
-    private function _updateGroup($uid, $gid, $add = true) {
-        $adminID = 2;
-        //we have to do this here because the incoming uri is not going to have admin status.
-        //we temporarily change it. This is safe because we verified the call was coming
-        //from paypal
-        UserUtil::setUserByUid($adminID);
-        if ($add) {
-            ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'adduser', array('gid' => $gid, 'uid' => $uid));
-        } else {
-            ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'removeuser', array('gid' => $gid, 'uid' => $uid));
+    /*
+      private function _updateGroup($uid, $gid, $add = true) {
+      $adminID = 2;
+      //we have to do this here because the incoming uri is not going to have admin status.
+      //we temporarily change it. This is safe because we verified the call was coming
+      //from paypal
+      UserUtil::setUserByUid($adminID);
+      if ($add) {
+
+      ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'adduser', array('gid' => $gid, 'uid' => $uid));
+      } else {
+      ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'removeuser', array('gid' => $gid, 'uid' => $uid));
+      }
+      UserUtil::setUserByUid($uid);
+      } */
+
+    /**
+     * This is a hack that goes right into the entities for the Group/User module.
+     * I was getting permission errors by trying to use the api, Hopefully this plays.
+     * @return boolean
+     * @throws \InvalidArgumentException
+     * @throws AccessDeniedException
+     */
+    private function _modifyUser($gid, $uid, $add = true, &$error="") {
+        // Argument check
+        if ((!isset($gid)) || (!isset($uid))) {
+            throw new \InvalidArgumentException(__('Invalid arguments array received'));
         }
-        UserUtil::setUserByUid($uid);
+        $em = $this->getDoctrine()->getManager();
+
+        // get group
+        $group = $em->find('ZikulaGroupsModule:GroupEntity', $gid);
+
+        if (!$group) {
+            return false;
+        }
+
+        $user = $em->find('ZikulaUsersModule:UserEntity', $uid);
+        if (!$user) {
+            return false;
+        }
+
+        try {
+            // Add user to group
+            if ($add) {
+                $user->addGroup($group);
+            } else {
+                $user->removeGroup($group);
+            }
+            $em->flush();
+        } catch (\Exception $e) {
+            
+            return false;
+        }
+        // Let the calling process know that we have finished successfully
+        return true;
     }
 
     /**
@@ -192,7 +250,7 @@ class SubscribeController extends AbstractController {
             throw new NotFoundHttpException($this->__('Variable error in _enter_transaction'));
             ;
         }
-        
+
         //see if we can find an item with the same txn_id in the
         //database. If we can this is a problem.
         $em = $this->getDoctrine()->getManager();
@@ -216,7 +274,7 @@ class SubscribeController extends AbstractController {
 
         //now grab the data out of the subsciption table
         $subscript_info = $this->_get_sub($item_number);
-        if($subscript_info == null){
+        if ($subscript_info == null) {
             $this->_set_error($req, $res, $payment_date, "No item for the item number. Check your subscription setup to insure that your Subscription Item Number matches what you are putting in your paypal button");
             return false;
         }
@@ -227,13 +285,13 @@ class SubscribeController extends AbstractController {
             $this->_set_error($req, $res, $payment_date, "Incorrect reciever Email:" . $receiver_email . ", correct Email should be:" . $email);
             return false;
         }
-        
+
         $payment_amt = $subscript_info->getWsfpaymentamount();
         //I added a range because Paypal was being cute and adding tax
-        if ( ($payment_gross == -1) || ((($payment_amt - 2) < $payment_gross) && (($payment_amt + 2) > $payment_gross)) ) {
+        if (($payment_gross == -1) || ((($payment_amt - 2) < $payment_gross) && (($payment_amt + 2) > $payment_gross))) {
             $payment_gross = $payment_amt;
         }
-       
+
         // check that payment_amount/payment_currency are correct
         if ($payment_gross != $payment_amt) {
             //wrong amount payed
@@ -271,7 +329,7 @@ class SubscribeController extends AbstractController {
         $query = $qb->getQuery();
         $the_item = $query->getResult();
 
-        if ( empty($the_item)) {
+        if (empty($the_item)) {
             throw new NotFoundHttpException($this->__('Unable to get subscriber.'));
         }
         return $the_item[0];
