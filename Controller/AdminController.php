@@ -1,9 +1,9 @@
 <?php
 
 /**
- * WebsiteFee Module
+ * WebsiteFeeModule Module
  *
- * The WebsiteFee module shows how to make a PostNuke module.
+ * The WebsiteFeeModule module shows how to make a PostNuke module.
  * It can be copied over to get a basic file structure.
  *
  * Purpose of file:  administration display functions --
@@ -11,7 +11,7 @@
  *                   for the module
  *
  * @package      Paustian
- * @subpackage   WebsiteFee
+ * @subpackage   WebsiteFeeModule
  * @version      2.0 
  * @author       Timothy Paustian
  * @link            http://www.microbiologytext.com
@@ -33,7 +33,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
-use SecurityUtil;
 use Paustian\WebsiteFeeModule\Form\SubscriberForm;
 
 /**
@@ -53,7 +52,7 @@ class AdminController extends AbstractController {
      */
     public function indexAction() {
         // Security check
-        if (!$this->hasPermission('WebsiteFee::', '::', ACCESS_ADMIN)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', '::', ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
         return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_index.html.twig');
@@ -68,12 +67,12 @@ class AdminController extends AbstractController {
      * to the viewer
      *
      * @author       Timothy Paustian
-     * @return       output       The main module admin page.
+     * @return       response       The main module admin page.
      */
     public function editAction(Request $request, WebsiteFeeSubsEntity $subscriber = null) {
         // Security check - important to do this as early as possible to avoid
         // potential security holes or just too much wasted processing
-        if (!$this->hasPermission('WebsiteFee::', '::', ACCESS_ADD)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', '::', ACCESS_ADD)) {
             throw new AccessDeniedException();
         }
 
@@ -85,8 +84,8 @@ class AdminController extends AbstractController {
         } else {
             $doMerge = true;
         }
-        //I need to add the use declaration for this class. 
-        $form = $this->createForm(new SubscriberForm(), $subscriber);
+
+        $form = $this->createForm(SubscriberForm::class, $subscriber);
 
         $form->handleRequest($request);
 
@@ -98,7 +97,7 @@ class AdminController extends AbstractController {
                 $em->persist($subscriber);
             }
             $em->flush();
-            $this->addFlash('status', _('Subscription saved.'));
+            $this->addFlash('status', $this->getTranslator()->__('Subscription saved.'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_edit'));
             return $response;
         }
@@ -116,7 +115,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifyAction(Request $request) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -131,7 +130,7 @@ class AdminController extends AbstractController {
         // execute query
         $subs = $query->getResult();
         if (!$subs) {
-            $this->addFlash('error', _('There are no subscriptions to edit'));
+            $this->addFlash('error', $this->getTranslator()->__('There are no subscriptions to edit'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
@@ -147,7 +146,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifytransAction(Request $request) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -162,7 +161,7 @@ class AdminController extends AbstractController {
         // execute query
         $trans = $query->getResult();
         if (!$trans) {
-            $this->addFlash('error', _('There are no transactions to delete'));
+            $this->addFlash('error',  $this->getTranslator()->__('There are no transactions to delete'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
@@ -178,7 +177,7 @@ class AdminController extends AbstractController {
      * The one to modify
      */
     public function modifyerrsAction(Request $request) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_EDIT)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
         // create a QueryBuilder instance
@@ -193,7 +192,7 @@ class AdminController extends AbstractController {
         // execute query
         $errors = $query->getResult();
         if (!$errors) {
-            $this->addFlash('error', _('There are no errors to delete'));
+            $this->addFlash('error',  $this->getTranslator()->__('There are no errors to delete'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
@@ -210,17 +209,17 @@ class AdminController extends AbstractController {
      * @param        confirmation   confirmation that this item can be deleted
      */
     public function deleteAction(Request $request, WebsiteFeeSubsEntity $subscriber) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         //This code should never be reached, but I added it anyway, just in case.
         if (null === $subscriber) {
-            $this->addFlash('error', _('That subscription does not exist'));
+            $this->addFlash('error', $this->getTranslator()->__('That subscription does not exist'));
         } else {
             $em = $this->getDoctrine()->getManager();
             $em->remove($subscriber);
             $em->flush();
-            $this->addFlash('status', _('Subscription Deleted'));
+            $this->addFlash('status', $this->getTranslator()->__('Subscription Deleted'));
         }
         $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_modify'));
         return $response;
@@ -237,7 +236,7 @@ class AdminController extends AbstractController {
      * @return type
      */
     public function deletetransAction(Request $request, WebsiteFeeTransEntity $transaction = null) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         //This code should never be reached, but I added it anyway, just in case.
@@ -260,13 +259,13 @@ class AdminController extends AbstractController {
                     ++$i;
                 }
                 $em->flush();
-                $this->addFlash('status', _('All Transactions Deleted'));
+                $this->addFlash('status',  $this->getTranslator()->__('All Transactions Deleted'));
                 $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             }
         } else {
             $em->remove($transaction);
             $em->flush();
-            $this->addFlash('status', _('Transaction Deleted'));
+            $this->addFlash('status',  $this->getTranslator()->__('Transaction Deleted'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_modifytrans'));
         }
         return $response;
@@ -279,7 +278,7 @@ class AdminController extends AbstractController {
      * @param WebsiteFeeErrorsEntity $error
      */
     public function deleteerrorAction(Request $request, WebsiteFeeErrorsEntity $error = null) {
-        if (!$this->hasPermission('WebsiteFee::', "::", ACCESS_DELETE)) {
+        if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
         $em = $this->getDoctrine()->getManager();
@@ -303,13 +302,13 @@ class AdminController extends AbstractController {
                     ++$i;
                 }
                 $em->flush();
-                $this->addFlash('status', _('All Error Deleted'));
+                $this->addFlash('status',  $this->getTranslator()->__('All Error Deleted'));
                 $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             }
         } else {
             $em->remove($error);
             $em->flush();
-            $this->addFlash('status', _('Error Deleted'));
+            $this->addFlash('status',  $this->getTranslator()->__('Error Deleted'));
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_modifyerrs'));
         }
         

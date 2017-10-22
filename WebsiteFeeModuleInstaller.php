@@ -1,10 +1,10 @@
 <?php
 
 /**
- * WebsiteFee Module
+ * WebsiteFeeModule Module
  * @package      Paustian
- * @subpackage   WebsiteFee
- * The WebsiteFee module 
+ * @subpackage   WebsiteFeeModule
+ * The WebsiteFeeModule module
  * @version      $Id: pninit.php,v 1.20 2005/08/09 12:22:08 markwest Exp $
  * @author       Timothy Paustian
  * @link			http://www.microbiologytext.com
@@ -14,29 +14,21 @@
 
 namespace Paustian\WebsiteFeeModule;
 
-use Zikula\Core\ExtensionInstallerInterface;
-use Zikula\Core\AbstractBundle;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use DoctrineHelper;
+use Zikula\Core\AbstractExtensionInstaller;
+use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
+use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
+use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
 
-class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, ContainerAwareInterface {
+class WebsiteFeeModuleInstaller extends AbstractExtensionInstaller {
     
     private $entities = array(
-            'Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity',
-            'Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity',
-            'Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity'
+            WebsiteFeeSubsEntity::class,
+            WebsiteFeeTransEntity::class,
+            WebsiteFeeErrorsEntity::class
         );
-    private $entityManager;
+
     /**
-     * @var ContainerInterface
-     * You need this to get the entitymanager.
-     */
-    private $container;
-    
-    private $bundle;
-    /**
-     * initialise the WebsiteFee module
+     * initialise the WebsiteFeeModule module
      *
      * This function is only ever called once during the lifetime of a particular
      * module instance.
@@ -45,10 +37,8 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
      * @return       bool       true on success, false otherwise
      */
     public function install() {
-        $this->entityManager = $this->container->get('doctrine.entitymanager');
-        
         try {
-            DoctrineHelper::createSchema($this->entityManager, $this->entities);
+            $this->schemaTool->create($this->entities);
         } catch (\Exception $e) {
             print($e->getMessage());
             return false;
@@ -58,7 +48,7 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
     }
 
     /**
-     * upgrade the WebsiteFee module from an old version
+     * upgrade the WebsiteFeeModule module from an old version
      *
      * This function can be called multiple times
      * This function MUST exist in the pninit file for a module
@@ -78,7 +68,7 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
     }
 
     /**
-     * delete the WebsiteFee module
+     * delete the WebsiteFeeModule module
      *
      * This function is only ever called once during the lifetime of a particular
      * module instance
@@ -88,9 +78,8 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
      * @return       bool       true on success, false otherwise
      */
     public function uninstall() {
-        $this->entityManager = $this->container->get('doctrine.entitymanager');
         try {
-            DoctrineHelper::dropSchema($this->entityManager, $this->entities);
+            $this->schemaTool->drop($this->entities);
         } catch (\PDOException $e) {
             print($e->getMessage());
             return false;
@@ -98,29 +87,6 @@ class WebsiteFeeModuleInstaller implements ExtensionInstallerInterface, Containe
 
         // Deletion successful
         return true;
-    }
-    
-    /**
-     * Sets the Container.
-     *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
-     *
-     * @api
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-        $this->setTranslator($container->get('translator'));
-    }
-
-    public function setTranslator($translator)
-    {
-        $this->translator = $translator;
-    }
-    
-    public function setBundle(AbstractBundle $bundle)
-    {
-        $this->bundle = $bundle;
     }
 }
 

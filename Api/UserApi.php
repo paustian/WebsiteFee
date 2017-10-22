@@ -2,9 +2,9 @@
 
 
 /**
- * WebsiteFee Module
+ * WebsiteFeeModule Module
  *
- * The WebsiteFee module shows how to make a PostNuke module.
+ * The WebsiteFeeModule module shows how to make a PostNuke module.
  * It can be copied over to get a basic file structure.
  *
  * Purpose of file:  User API --
@@ -12,7 +12,7 @@
  *                   functions for the module
  *
  * @package      Paustian
- * @subpackage   WebsiteFee
+ * @subpackage   WebsiteFeeModule
  * @version      $Id: pnuserapi.php,v 1.15 2004/09/18 21:30:28 markwest Exp $
  * @author       Timothy Paustian
  * @link              http://www.microbiologytext.com

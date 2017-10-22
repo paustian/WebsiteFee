@@ -1,6 +1,6 @@
 {{ render(controller('ZikulaAdminModule:Admin:adminheader')) }}
 <div class="container-fluid">
-    <p>{{ __('Welcome to the administration interface for the WebsiteFee module. The only item you set up from here is ') }}
+    <p>{{ __('Welcome to the administration interface for the WebsiteFeeModule module. The only item you set up from here is ') }}
         <a href="{{ path('paustianwebsitefeemodule_admin_edit') }}">{{ __('subscriptions') }}</a>. {{ __(' The rest of the interaction is 
         done through an interface with paypal. Go to PayPals') }} <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_button-management">{{__(' button creation tool')}}</a>
         {{ __(' to create your button. Remember to add the custom parameter with the user id in it') }}</p>
