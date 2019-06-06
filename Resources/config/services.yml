@@ -1,0 +1,16 @@
+services:
+  paustian_websitefee_module.container.link_container:
+      class: Paustian\WebsiteFeeModule\Container\LinkContainer
+      arguments:
+        - "@translator.default"
+        - "@router"
+        - "@zikula_permissions_module.api.permission"
+      tags:
+          - { name: zikula.link_container }
+
+  paustian_websitefee_module.form.subscriberform_type:
+      class: Paustian\WebsiteFeeModule\Form\SubscriberForm
+      arguments:
+        - "@translator.default"
+      tags:
+        - { name: form.type }

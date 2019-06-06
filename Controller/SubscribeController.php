@@ -1,16 +1,16 @@
 <?php
 
 /**
- * WebsiteFee Module
+ * WebsiteFeeModule Module
  *
- * The WebsiteFee module shows how to make a PostNuke module.
+ * The WebsiteFeeModule module shows how to make a PostNuke module.
  * It can be copied over to get a basic file structure.
  *
  * Purpose of file:  user display functions --
  *                   This file contains all user GUI functions for the module
  *
  * @package      Paustian
- * @subpackage   WebsiteFee
+ * @subpackage   WebsiteFeeModule
  * @version      $Id: pnuser.php,v 1.19 2005/06/03 11:24:15 markwest Exp $
  * @author       Timothy Paustian
  * @author       Timothy Paustian
@@ -47,6 +47,9 @@ use System;
  */
 class SubscribeController extends AbstractController {
 
+    private $paymentDate;
+    private $response;
+    private $request;
     /**
      * @Route("")
      * 
@@ -60,7 +63,7 @@ class SubscribeController extends AbstractController {
             throw new AccessDeniedException();
         }
 
-        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
+        return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
     }
 
     /**
@@ -75,7 +78,7 @@ class SubscribeController extends AbstractController {
     public function testsubscribeAction(Request $request) {
 
         return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
-        //return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig'));
+        //return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
     }
 
     /**
@@ -83,8 +86,8 @@ class SubscribeController extends AbstractController {
      */
     public function testupdategroupAction(Request $request) {
         //This is a test function to try to debug update group
-        $this->_updateGroup('3', '3');
-        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
+        //$this->_updateGroup('3', '3');
+        return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
     }
 
     /**
@@ -95,17 +98,17 @@ class SubscribeController extends AbstractController {
      */
     public function subscribepaypalAction(Request $request) {
         $listener = new IpnListener();
-        $payment_date = urldecode($request->get('payment_date'));
-        $paymentDateTmp = strtotime($payment_date);
-        $payment_date = new DateTime(strftime('%Y-%m-%d %H:%M:%S', $paymentDateTmp));
+        $this->paymentDate = urldecode($request->get('$this->paymentDate'));
+        $paymentDateTmp = strtotime($this->paymentDate);
+        $this->paymentDate = new DateTime(strftime('%Y-%m-%d %H:%M:%S', $paymentDateTmp));
         try {
-            $listener->debug = false;
+            $listener->debug = true;
             $listener->force_ssl_v3 = false;
             $verified = $listener->processIpn();
         } catch (Exception $e) {
-            $res = $listener->getResponse();
-            $req = $listener->getPostUri();
-            $this->_set_error($req, $res, $payment_date, $e->getMessage());
+            $this->response = $listener->getResponse();
+            $this->request = $listener->getPostUri();
+            $this->_set_error($e->getMessage());
             exit(0);
         }
         if ($verified) {
@@ -119,11 +122,10 @@ class SubscribeController extends AbstractController {
             $payment_gross = $request->get('mc_gross');
             $payment_status = $request->get('payment_status');
             $payer_email = urldecode($request->get('payer_email'));
-            $res = $listener->getResponse();
-            $req = $listener->getPostUri();
-            $u_vars = UserUtil::getVars($uid);
+            $this->response = $listener->getResponse();
+            $this->request = $listener->getPostUri();
             //enter transcaction makes sure it has all the information that we need
-            if ($this->_enterTransaction($uid, $txn_id, $payer_email, $payment_date, $req, $res, $reciever_email, $payment_gross, $item_no, $txn_type)) {
+            if ($this->_enterTransaction($uid, $txn_id, $payer_email, $reciever_email, $payment_gross, $item_no, $txn_type)) {
                 if ($txn_type === 'subscr_cancel') {
                     $this->_cancelSubscription($uid, $item_no);
                 } else if (($txn_type === 'subscr_payment' && $payment_status === 'Completed') || ($txn_type == 'web_accept')) {
@@ -134,9 +136,12 @@ class SubscribeController extends AbstractController {
             }
         } else {
             //we have an invalid transaction, record it.
-            $res = $listener->getResponse();
-            $req = $listener->getPostUri();
-            $this->_set_error($req, $res, $payment_date, "Transaction not verified");
+            $this->response = $listener->getResponse();
+            $this->request = $listener->getPostUri();
+            $this->_set_error("Transaction not verified");
+        }
+        if($listener->debug){
+            return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
         }
     }
 
@@ -146,34 +151,18 @@ class SubscribeController extends AbstractController {
 
         if (!$this->_modifyUser($uid, $gid, false, $e)) {
             //write an error to the error log;
-            $this->_set_error($req, $res, $payment_date, "Unable to cancel subscription: $e");
+            $this->_set_error("Unable to cancel subscription: $e");
         }
     }
 
     private function _addSubscription($uid, $item_no) {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
-        if (!$this->_modifyUser($uid, $gid, true, $e)) {
+        if (!$this->_modifyUser($gid, $uid, true, $e)) {
             //write an error to the error log;
-            $this->_set_error($req, $res, $payment_date, "Unable to add subscription: $e");
+            $this->_set_error("Unable to add subscription: $e");
         }
     }
-
-    /*
-      private function _updateGroup($uid, $gid, $add = true) {
-      $adminID = 2;
-      //we have to do this here because the incoming uri is not going to have admin status.
-      //we temporarily change it. This is safe because we verified the call was coming
-      //from paypal
-      UserUtil::setUserByUid($adminID);
-      if ($add) {
-
-      ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'adduser', array('gid' => $gid, 'uid' => $uid));
-      } else {
-      ModUtil::apiFunc('ZikulaGroupsModule', 'user', 'removeuser', array('gid' => $gid, 'uid' => $uid));
-      }
-      UserUtil::setUserByUid($uid);
-      } */
 
     /**
      * This is a hack that goes right into the entities for the Group/User module.
@@ -223,30 +212,27 @@ class SubscribeController extends AbstractController {
      *
      *  set_error
      *
-     * @param $req - The initial request
-     * @param $res - The reply from paypal
      * @param $line - A line explaining why an error was posted.
      *
      *
      */
-    private function _set_error($req, $res, $payment_date, $line) {
+    private function _set_error($line) {
         $error = new WebsiteFeeErrorsEntity();
-        $error->setWsferrdate($payment_date);
+        $error->setWsferrdate($this->paymentDate);
         $error->setWsferroeexp($line);
-        $error->setWsfrequest($req);
-        $error->setWsfrespone($res);
+        $error->setWsfrequest($this->request);
+        $error->setWsfrespone($this->response);
         $em = $this->getDoctrine()->getManager();
         $em->persist($error);
         $em->flush();
     }
 
-    private function _enterTransaction($uid, $txn_id, $payer_email, $payment_date, $req, $res, $receiver_email, $payment_gross, $item_number, $subscr_type) {
+    private function _enterTransaction($uid, $txn_id, $payer_email, $receiver_email, $payment_gross, $item_number, $subscr_type) {
 
         // Argument check - make sure that all required arguments are present,
         // if not then set an appropriate error message and return
         if ((!isset($uid)) || (!isset($payer_email)) ||
-                (!isset($txn_id)) ||
-                (!isset($payment_date))) {
+                (!isset($txn_id))) {
             throw new NotFoundHttpException($this->__('Variable error in _enter_transaction'));
             ;
         }
@@ -268,21 +254,21 @@ class SubscribeController extends AbstractController {
         if (!empty($dup_trans)) {
             //if we find it, someone is trying to spoof us
             //log this as an error and then return false
-            $this->_set_error($req, $res, $payment_date, "Duplicate transaction ID:" . $txn_id);
+            $this->_set_error("Duplicate transaction ID:" . $txn_id);
             return false;
         }
 
         //now grab the data out of the subsciption table
         $subscript_info = $this->_get_sub($item_number);
         if ($subscript_info == null) {
-            $this->_set_error($req, $res, $payment_date, "No item for the item number. Check your subscription setup to insure that your Subscription Item Number matches what you are putting in your paypal button");
+            $this->_set_error("No item for the item number. Check your subscription setup to insure that your Subscription Item Number matches what you are putting in your paypal button");
             return false;
         }
         $email = $subscript_info->getWsfemail();
         // check that receiver_email is your Primary PayPal email
         if ($receiver_email !== $email) {
             //not the correct email, again log as a spoof.
-            $this->_set_error($req, $res, $payment_date, "Incorrect reciever Email:" . $receiver_email . ", correct Email should be:" . $email);
+            $this->_set_error("Incorrect reciever Email:" . $receiver_email . ", correct Email should be:" . $email);
             return false;
         }
 
@@ -295,13 +281,13 @@ class SubscribeController extends AbstractController {
         // check that payment_amount/payment_currency are correct
         if ($payment_gross != $payment_amt) {
             //wrong amount payed
-            $this->_set_error($req, $res, $payment_date, "payment inccorect: " . $payment_gross . ", correct amount should be: " . $payment_amt);
+            $this->_set_error("payment inccorect: " . $payment_gross . ", correct amount should be: " . $payment_amt);
             return false;
         }
 
         $transaction = new WebsiteFeeTransEntity();
         $transaction->setWsfemail($payer_email);
-        $transaction->setWsfpaydate($payment_date);
+        $transaction->setWsfpaydate($this->paymentDate);
         $transaction->setWsfsubtype($subscr_type);
         $transaction->setWsftxid($txn_id);
         $transaction->setWsfusername($uid);
@@ -324,7 +310,7 @@ class SubscribeController extends AbstractController {
             $qb->setParameter(1, $item_number);
         } else {
             //either both are missing or there is a argument error.
-            throw new NotFoundHttpException($this->__('item_number incorrect in WebsiteFee::_get_sub()'));
+            throw new NotFoundHttpException($this->__('item_number incorrect in WebsiteFeeModule::_get_sub()'));
         }
         $query = $qb->getQuery();
         $the_item = $query->getResult();
