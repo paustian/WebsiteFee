@@ -98,11 +98,11 @@ class SubscribeController extends AbstractController {
      */
     public function subscribepaypalAction(Request $request) {
         $listener = new IpnListener();
-        $this->paymentDate = urldecode($request->get('$this->paymentDate'));
+        $this->paymentDate = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($this->paymentDate);
         $this->paymentDate = new DateTime(strftime('%Y-%m-%d %H:%M:%S', $paymentDateTmp));
         try {
-            $listener->debug = true;
+            //$listener->debug = true;
             $listener->force_ssl_v3 = false;
             $verified = $listener->processIpn();
         } catch (Exception $e) {
@@ -141,7 +141,7 @@ class SubscribeController extends AbstractController {
             $this->_set_error("Transaction not verified");
         }
         if($listener->debug){
-            return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
+            return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
         }
     }
 
