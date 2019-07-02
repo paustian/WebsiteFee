@@ -93,6 +93,11 @@ class LinkContainer implements LinkContainerInterface
             'url' => $this->router->generate('paustianwebsitefeemodule_admin_modifyerrs'),
             'text' => $this->translator->__('View/Delete Errors'),
             'icon' => 'list');
+        $links[] = array(
+            'url' => $this->router->generate('paustianwebsitefeemodule_subscribe_testsubscribe'),
+            'text' => $this->translator->__('Test Subscription Locally'),
+            'icon' => 'graduation-cap');
+
         return $links;
     }
 
