@@ -194,7 +194,6 @@ class IpnListener {
         if ($post_data === null) {
             // use raw POST data
             if (!empty($_POST)) {
-                $this->entryData = $_POST;
                 $raw_post_data = file_get_contents('php://input');
                 $ray_post_array = explode('&', $raw_post_data);
                 $myPost = [];
@@ -207,7 +206,7 @@ class IpnListener {
                 foreach($myPost as $key => $value){
                     $encoded_data .= "&$key=" . urlencode($value);
                 }
-
+                $this->entryData = $encoded_data;
             } else {
                 throw new Exception("No POST data found.");
             }

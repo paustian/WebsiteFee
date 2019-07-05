@@ -51,7 +51,7 @@ class SubscribeController extends AbstractController {
     private $response;
     private $request;
     private $listener;
-    private $debug;
+    private $debug = false;
     /**
      * @Route("")
      *
@@ -103,13 +103,13 @@ class SubscribeController extends AbstractController {
      */
     public function subscribepaypalAction(Request $request) {
         $this->listener = new IpnListener();
-        $this->debug = false;
         $this->paymentDate = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($this->paymentDate);
         $this->paymentDate = new DateTime(strftime('%Y-%m-%d %H:%M:%S', $paymentDateTmp));
+        $verified = 'NOPE';
         try {
-            $this->listener->use_sandbox = true;
-            $this->listener->debug = false;
+            $this->listener->use_sandbox = false;
+            $this->listener->debug = $this->debug;
             $verified = $this->listener->processIpn();
         } catch (Exception $e) {
             $this->response = $this->listener->getResponse();
@@ -119,8 +119,6 @@ class SubscribeController extends AbstractController {
             exit(0);
         }
         if ($verified) {
-            //note you can quickly get the user id using
-            //SessionUtil::getVar('uid')
             $uid = $request->get('custom');
             $txn_id = $request->get('txn_id');
             $reciever_email = urldecode($request->get('receiver_email'));
@@ -144,7 +142,6 @@ class SubscribeController extends AbstractController {
         } else {
             //we have an invalid transaction, record it.
             $this->response = $this->listener->getResponse();
-            $this->request = $_POST;
             $this->_set_error("Transaction not verified");
         }
         if($this->debug){
@@ -230,7 +227,8 @@ class SubscribeController extends AbstractController {
         $error = new WebsiteFeeErrorsEntity();
         $error->setWsferrdate($this->paymentDate);
         $error->setWsferroeexp($line);
-        $error->setWsfrequest($this->request);
+        //$this->request = implode("\n", $_POST);
+        $error->setWsfrequest($this->listener->entryData);
         $error->setWsfrespone($this->response);
         $em = $this->getDoctrine()->getManager();
         if(!$em->isOpen()){
@@ -304,8 +302,13 @@ class SubscribeController extends AbstractController {
         $transaction->setWsfsubtype($subscr_type);
         $transaction->setWsftxid($txn_id);
         $transaction->setWsfusername($uid);
+        if(!$em->isOpen()){
+            $em = $this->getDoctrine()->resetManager();
+        }
         $em->persist($transaction);
         $em->flush();
+        //Just record the information for now. Get rid of this code later
+        $this->_set_error("transaction worked.");
         return true;
     }
 
