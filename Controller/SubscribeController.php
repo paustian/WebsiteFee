@@ -106,7 +106,7 @@ class SubscribeController extends AbstractController {
         $this->paymentDate = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($this->paymentDate);
         $this->paymentDate = new DateTime(strftime('%Y-%m-%d %H:%M:%S', $paymentDateTmp));
-        $verified = 'NOPE';
+        $verified = false;
         try {
             $this->listener->use_sandbox = false;
             $this->listener->debug = $this->debug;

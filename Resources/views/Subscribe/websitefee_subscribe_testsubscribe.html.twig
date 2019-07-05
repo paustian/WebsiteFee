@@ -5,7 +5,7 @@
         {{ __("The WebsiteFeeModule Test Data") }}
     </h3>
     <form action="{{ path('paustianwebsitefeemodule_subscribe_subscribepaypal') }}" method="POST">
-            <input type="hidden" name="mc_gross" value="15" />
+            <p>Payment amount: <input type="text" name="mc_gross" value="15" /</p>
             <input type="hidden" name="protection_eligibility" value="Eligible" />
             <input type="hidden" name="address_status" value="confirmed" />
             <input type="hidden" name="payer_id" value="LPLWNMTBWMFAY" />
@@ -25,7 +25,7 @@
             <input type="hidden" name="quantity" value="1" />
             <input type="hidden" name="verify_sign" value="AtkOfCXbDm2hu0ZELryHFjY-Vb7PAUvS6nMXgysbElEn9v-1XcmSoGtf" />
             <input type="hidden" name="payer_email" value="gpmac_1231902590_per%40paypal.com" />
-            <p><input type="text" name="txn_id" value="61G7JH711754525319" /> Transaction ID</p>
+            <p>Transaction ID: <input type="text" name="txn_id" value="61G7JH711754525319" /> </p>
             <input type="hidden" name="payment_type" value="instant" />
             <input type="hidden" name="last_name" value="User" />
             <input type="hidden" name="address_state" value="CA" />
@@ -42,13 +42,13 @@
             </select>
             <!-- <input type="hidden" name="txn_type" value="subscr_payment" /> -->
             <input type="hidden" name="mc_currency" value="USD" />
-            <input type="hidden" name="item_number" value="11002" />
+            <p>Item Number: <input type="text" name="item_number" value="11002" /></p>
             <input type="hidden" name="residence_country" value="US" />
             <input type="hidden" name="test_ipn" value="1" />
             <input type="hidden" name="handling_amount" value="0" />
             <input type="hidden" name="payment_gross" value="15" />
             <input type="hidden" name="shipping" value="0.00" />
-            <input type="hidden" name="custom" value="2" />
+            <p>User ID:<input type="text" name="custom" value="2" /></p>
             <input type='submit' />
     </form>
 </div>
