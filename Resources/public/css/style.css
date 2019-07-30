@@ -20,3 +20,13 @@ div.example_itemlist {
 	border: 1px dotted black;
 }
 
+table-fixed {
+	table-layout: fixed;
+	width: 500px;
+}
+
+th-fixed {
+	overflow: hidden;
+	width: 100px;
+}
+

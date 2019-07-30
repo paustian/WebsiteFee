@@ -5,33 +5,39 @@
         {{ __("The WebsiteFeeModule Test Data") }}
     </h3>
     <form action="{{ path('paustianwebsitefeemodule_subscribe_subscribepaypal') }}" method="POST">
-            <p>Payment amount: <input type="text" name="mc_gross" value="15" /</p>
-            <input type="hidden" name="protection_eligibility" value="Eligible" />
-            <input type="hidden" name="address_status" value="confirmed" />
-            <input type="hidden" name="payer_id" value="LPLWNMTBWMFAY" />
-            <input type="hidden" name="address_street" value="1+Main+St" />
-            <input type="hidden" name="payment_date" value="20%3A12%3A59+Jan+13%2C+2009+PST" />
-            <input type="hidden" name="payment_status" value="Completed" />
-            <input type="hidden" name="charset" value="windows-1252" />
-            <input type="hidden" name="address_zip" value="95131" />
-            <input type="hidden" name="first_name" value="Test" />
-            <input type="hidden" name="mc_fee" value="0.88" />
-            <input type="hidden" name="address_country_code" value="US" />
-            <input type="hidden" name="address_name" value="Test+User" />
-            <input type="hidden" name="notify_version" value="2.6" />
-            <input type="hidden" name="payer_status" value="verified" />
-            <input type="hidden" name="address_country" value="United+States" />
-            <input type="hidden" name="address_city" value="San+Jose" />
-            <input type="hidden" name="quantity" value="1" />
-            <input type="hidden" name="verify_sign" value="AtkOfCXbDm2hu0ZELryHFjY-Vb7PAUvS6nMXgysbElEn9v-1XcmSoGtf" />
-            <input type="hidden" name="payer_email" value="gpmac_1231902590_per%40paypal.com" />
-            <p>Transaction ID: <input type="text" name="txn_id" value="61G7JH711754525319" /> </p>
-            <input type="hidden" name="payment_type" value="instant" />
-            <input type="hidden" name="last_name" value="User" />
-            <input type="hidden" name="address_state" value="CA" />
-            <input type="hidden" name="receiver_email" value="tdpaust%40chorus.net" />
-            <input type="hidden" name="payment_fee" value="0.88" />
-            <input type="hidden" name="receiver_id" value="S8XGHLYDW9T3S" />
+            <p><input type="text" name="mc_gross" value="15.83" /></p>
+            <p><input type="text" name="protection_eligibility" value="Ineligible" /></p>
+            <p><input type="text" name="payer_id" value="GE6NU5SGDCX32" /></p>
+            <p><input type="text" name="tax" value="0.83" /></p>
+            <p><input type="text" name="payment_date" value="15:16:56 Jul 26, 2019 PDT" /></p>
+            <p><input type="text" name="payment_status" value="Completed" /></p>
+            <p><input type="text" name="charset" value="windows-1252" /></p>
+            <p><input type="text" name="first_name" value="Chongyang" /></p>
+            <p><input type="text" name="mc_fee" value="0.76" /></p>
+            <p><input type="text" name="notify_version" value="3.9" /></p>
+            <p><input type="text" name="custom" value="2" /></p>
+            <p><input type="text" name="payer_status" value="unverified" /></p>
+            <p><input type="text" name="business" value="tdpaust@chorus.net" /></p>
+            <p><input type="text" name="quantity" value="1" /></p>
+            <p><input type="text" name="verify_sign" value="APAjVwlJBZQE.C.Efo1DvVNrq0TBAMPKWkjoH03LbzSVYYNH8VipUllm" /></p>
+            <p><input type="text" name="payer_email" value="cwang643@wisc.edu" /></p>
+            <p><input type="text" name="txn_id" value="6UP50227XD3883217" /></p>
+            <p><input type="text" name="payment_type" value="instant" /></p>
+            <p><input type="text" name="last_name" value="Wang" /></p>
+            <p><input type="text" name="receiver_email" value="tdpaust@chorus.net" /></p>
+            <p><input type="text" name="payment_fee" value="0.76" /></p>
+            <p><input type="text" name="shipping_discount" value="0.00" /></p>
+            <p><input type="text" name="receiver_id" value="9CEJST87G36YE" /></p>
+            <p><input type="text" name="insurance_amount" value="0.00" /></p>
+            <p><input type="text" name="item_name" value="Why Microbes Matter" /></p>
+            <p><input type="text" name="discount" value="0.00" /></p>
+            <p><input type="text" name="mc_currency" value="USD" /></p>
+            <p><input type="text" name="item_number" value="11002" /></p>
+            <p><input type="text" name="residence_country" value="US" /></p>
+            <p><input type="text" name="shipping_method" value="Default" /></p>
+            <p><input type="text" name="transaction_subject" value="" /></p>
+            <p><input type="text" name="payment_gross" value="15.83" /></p>
+            <p><input type="text" name="ipn_track_id" value="3181950c29b47" /></p>
             <!-- here is the one you change to test different types -->
             <!-- <input type="hidden" name="txn_type" value="subscr_cancel" /> -->
             <p>Transaction Type</p>
@@ -40,15 +46,6 @@
                 <option value="subscr_cancel">subscr_cancel</option>
                 <option value="subscr_payment">subscr_payment</option>
             </select>
-            <!-- <input type="hidden" name="txn_type" value="subscr_payment" /> -->
-            <input type="hidden" name="mc_currency" value="USD" />
-            <p>Item Number: <input type="text" name="item_number" value="11002" /></p>
-            <input type="hidden" name="residence_country" value="US" />
-            <input type="hidden" name="test_ipn" value="1" />
-            <input type="hidden" name="handling_amount" value="0" />
-            <input type="hidden" name="payment_gross" value="15" />
-            <input type="hidden" name="shipping" value="0.00" />
-            <p>User ID:<input type="text" name="custom" value="2" /></p>
             <input type='submit' />
     </form>
 </div>

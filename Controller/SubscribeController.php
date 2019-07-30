@@ -143,10 +143,23 @@ class SubscribeController extends AbstractController {
             //we have an invalid transaction, record it.
             $this->response = $this->listener->getResponse();
             $this->_set_error("Transaction not verified");
+
         }
         if($this->debug){
             return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
         }
+        /*$response = new Response();
+
+        $response->setContent('');
+        $response->setStatusCode(Response::HTTP_OK);
+
+        // sets a HTTP response header
+        $response->headers->set('Content-Type', 'text/html');
+
+        // prints the HTTP headers followed by the content
+        return $response;*/
+        http_response_code (200);
+        exit();
     }
 
     private function _cancelSubscription($uid, $item_no) {
