@@ -14,6 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule\Entity;
 
+use Symfony\Component\Validator\Constraints\DateTime;
 use Zikula\Core\Doctrine\EntityAccess;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -69,43 +70,43 @@ class WebsiteFeeErrorsEntity extends EntityAccess {
      */
     private $wsferrdate;
     
-    public function getId() {
+    public function getId() : int {
         return $this->id;
     }
 
-    public function getWsfrequest() {
+    public function getWsfrequest() : string {
         return $this->wsfrequest;
     }
 
-    public function getWsfrespone() {
+    public function getWsfrespone() : string {
         return $this->wsfrespone;
     }
 
-    public function getWsferroeexp() {
+    public function getWsferroeexp() : string {
         return $this->wsferroeexp;
     }
 
-    public function getWsferrdate() {
+    public function getWsferrdate() : datetime {
         return $this->wsferrdate;
     }
 
-    public function setId($id) {
+    public function setId(int $id) : void {
         $this->id = $id;
     }
 
-    public function setWsfrequest($wsfrequest) {
+    public function setWsfrequest(string $wsfrequest) : void {
         $this->wsfrequest = $wsfrequest;
     }
 
-    public function setWsfrespone($wsfrespone) {
+    public function setWsfrespone(string $wsfrespone) : void {
         $this->wsfrespone = $wsfrespone;
     }
 
-    public function setWsferroeexp($wsferroeexp) {
+    public function setWsferroeexp(string $wsferroeexp) : void {
         $this->wsferroeexp = $wsferroeexp;
     }
 
-    public function setWsferrdate($wsferrdate) {
+    public function setWsferrdate(datetime $wsferrdate) : void  {
         $this->wsferrdate = $wsferrdate;
     }
 

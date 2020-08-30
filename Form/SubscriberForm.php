@@ -9,7 +9,6 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Zikula\Common\Translator\TranslatorInterface;
 /**
  * Description of ExamForm
  * Set up the elements for a Exam form.
@@ -18,34 +17,21 @@ use Zikula\Common\Translator\TranslatorInterface;
  * 
  */
 class SubscriberForm extends AbstractType {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
 
-
-    /**
-     * BlockType constructor.
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(
-        TranslatorInterface $translator)   {
-        $this->translator = $translator;
-    }
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options) : void
     {
         $builder
-            ->add('wsfsubsname', TextType::class, array('label' => $this->translator->__('Subscription Name'), 'required' => true))
-            ->add('wsfitem', IntegerType::class, array('label' => $this->translator->__('Subscription Item Number'), 'required' => true))
-            ->add('wsfpaymentamount', IntegerType::class, array('label' => $this->translator->__('Payment Amount'), 'required' => true))
-            ->add('wsfemail', EmailType::class, array('label' => $this->translator->__('Provider Email'), 'required' => true))
-            ->add('wsfgroupid', IntegerType::class, array('label' => $this->translator->__('The group to subscribe'), 'required' => true))
-            ->add('save', SubmitType::class, array('label' => $this->translator->__('Save Subscription')))
-            ->add('cancel', ButtonType::class, array('label' => $this->translator->__('Cancel')));
+            ->add('wsfsubsname', TextType::class, array('label' => 'Subscription Name', 'required' => true))
+            ->add('wsfitem', IntegerType::class, array('label' => 'Subscription Item Number', 'required' => true))
+            ->add('wsfpaymentamount', IntegerType::class, array('label' => 'Payment Amount', 'required' => true))
+            ->add('wsfemail', EmailType::class, array('label' => 'Provider Email', 'required' => true))
+            ->add('wsfgroupid', IntegerType::class, array('label' => 'The group to subscribe', 'required' => true))
+            ->add('save', SubmitType::class, array('label' => 'Save Subscription'))
+            ->add('cancel', ButtonType::class, array('label' => 'Cancel'));
         
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix() : string
     {
         return 'paustianwebsitefeemodule_subscriberform';
     }
@@ -56,7 +42,7 @@ class SubscriberForm extends AbstractType {
      *
      * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolver $resolver) : void
     {
         $resolver->setDefaults(array(
             'data_class' => 'Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity',

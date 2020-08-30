@@ -4,14 +4,14 @@
     <div class="row">
         <h3>
             <span class="fa fa-edit"></span>
-            {{ __("Edit a Subscription") }}
+            {{ "Edit a Subscription" | trans }}
         </h3>
-        <p>{{ __("Fill in the details for a subscription. This is the data PayPal will check against for adding subscriptions. The group ID is the group to which the user should be added.") }}</p>
+        <p>{{ "Fill in the details for a subscription. This is the data PayPal will check against for adding subscriptions. The group ID is the group to which the user should be added." | trans }}</p>
         {{ showflashes() }}
         {{ form_start(form) }}
         {{ form_errors(form) }}
         <fieldset>
-            <legend>{{ __('Subscriber') }}</legend>
+            <legend>{{ 'Subscriber' | trans }}</legend>
             {{ form_row(form.wsfsubsname) }}
             {{ form_row(form.wsfitem) }}
             {{ form_row(form.wsfpaymentamount) }}

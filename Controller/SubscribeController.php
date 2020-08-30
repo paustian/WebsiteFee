@@ -1,5 +1,5 @@
 <?php
-
+I had just finished updaiting this with the required classes and removing ones that are not being used.
 /**
  * WebsiteFeeModule Module
  *
@@ -21,25 +21,18 @@
 
 namespace Paustian\WebsiteFeeModule\Controller;
 
-use Zikula\Core\Controller\AbstractController;
+use Zikula\Bundle\CoreBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\RouterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route; // used in annotations - do not remove
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method; // used in annotations - do not remove
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
-use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
-use SecurityUtil;
 use Paustian\WebsiteFeeModule\Api\IpnListener;
-use UserUtil;
-use ModUtil;
 use DateTime;
 use Exception;
-use System;
 
 /**
  * This controller is for managing subscriptions with paypal. There is no admin or user interaction with
@@ -52,20 +45,19 @@ class SubscribeController extends AbstractController {
     private $request;
     private $listener;
     private $debug = false;
+
     /**
      * @Route("")
      *
-     *
-     * Params: none
-     * Returns: nothing
+     * @return Response
      */
-    public function indexAction() {
+    public function indexAction() : Response {
         //securtiy check first
         if (!$this->hasPermission('quickcheck::', '::', ACCESS_OVERVIEW)) {
             throw new AccessDeniedException();
         }
 
-        return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
+        return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_index.html.twig');
     }
 
     /**
@@ -75,9 +67,10 @@ class SubscribeController extends AbstractController {
      * This function is for debugging the subscription.
      *
      * @author       Timothy Paustian
-     * @return       output       The main module page
+     * @param Request $request
+     * @return Response
      */
-    public function testsubscribeAction(Request $request) {
+    public function testsubscribeAction(Request $request) : Response {
         if($this->debug){
             return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
         }
@@ -86,11 +79,14 @@ class SubscribeController extends AbstractController {
 
     /**
      * @Route("/testupdategroup")
+     *
+     * @param Request $request
+     * @return Response
      */
-    public function testupdategroupAction(Request $request) {
+    public function testupdategroupAction(Request $request) : Response {
         //This is a test function to try to debug update group
         if($this->debug){
-            $this->_updateGroup('3', '3');
+            $this->_updateGroup(3, 3);
         }
         return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
     }
@@ -100,8 +96,10 @@ class SubscribeController extends AbstractController {
      *
      * This it the routine that actually communicates with PayPal and manages the subscriptions
      * @param Request $request
+     * @return Response
+     * @throws Exception
      */
-    public function subscribepaypalAction(Request $request) {
+    public function subscribepaypalAction(Request $request) : Response {
         $this->listener = new IpnListener();
         $this->paymentDate = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($this->paymentDate);
@@ -162,7 +160,11 @@ class SubscribeController extends AbstractController {
         exit();
     }
 
-    private function _cancelSubscription($uid, $item_no) {
+    /**
+     * @param int $uid
+     * @param int $item_no
+     */
+    private function _cancelSubscription(int $uid, int $item_no) : void {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
 
@@ -172,7 +174,7 @@ class SubscribeController extends AbstractController {
         }
     }
 
-    private function _addSubscription($uid, $item_no) {
+    private function _addSubscription(int $uid, int $item_no) : void {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
         if (!$this->_modifyUser($gid, $uid, true, $e)) {
@@ -184,14 +186,17 @@ class SubscribeController extends AbstractController {
     /**
      * This is a hack that goes right into the entities for the Group/User module.
      * I was getting permission errors by trying to use the api, Hopefully this plays.
-     * @return boolean
+     * @param int $gid
+     * @param int $uid
+     * @param bool $add
+     * @param string $error
+     * @return bool
      * @throws \InvalidArgumentException
-     * @throws AccessDeniedException
      */
-    private function _modifyUser($gid, $uid, $add = true, &$error="") {
+    private function _modifyUser(int $gid, int $uid, bool $add = true, string &$error="") : bool {
         // Argument check
         if ((!isset($gid)) || (!isset($uid))) {
-            throw new \InvalidArgumentException(__('Invalid arguments array received'));
+            throw new \InvalidArgumentException($this->trans('Invalid arguments received'));
         }
         $em = $this->getDoctrine()->getManager();
 
@@ -219,7 +224,7 @@ class SubscribeController extends AbstractController {
             }
             $em->flush();
         } catch (\Exception $e) {
-
+            $error = $e->getMessage();
             return false;
         }
         // Let the calling process know that we have finished successfully
@@ -231,12 +236,9 @@ class SubscribeController extends AbstractController {
      * there should be no way to call this from outside.
      *
      *  set_error
-     *
-     * @param $line - A line explaining why an error was posted.
-     *
-     *
+     * @param string $line
      */
-    private function _set_error($line) {
+    private function _set_error(string $line) : void {
         $error = new WebsiteFeeErrorsEntity();
         $error->setWsferrdate($this->paymentDate);
         $error->setWsferroeexp($line);
@@ -251,14 +253,32 @@ class SubscribeController extends AbstractController {
         $em->flush();
     }
 
-    private function _enterTransaction($uid, $txn_id, $payer_email, $receiver_email, $payment_gross, $item_number, $subscr_type) {
+    /**
+     * This is the guts of the application. It checks to make sure the payment is valid by talking to paypal
+     * It then enters the transaction in the database for future referece.
+     *
+     * @param int $uid
+     * @param string $txn_id
+     * @param string $payer_email
+     * @param string $receiver_email
+     * @param string $payment_gross
+     * @param string $item_number
+     * @param string $subscr_type
+     * @return bool
+     */
+    private function _enterTransaction(int $uid,
+                                       string $txn_id,
+                                       string $payer_email,
+                                       string $receiver_email,
+                                       string $payment_gross,
+                                       string $item_number,
+                                       string $subscr_type) :bool {
 
         // Argument check - make sure that all required arguments are present,
         // if not then set an appropriate error message and return
         if ((!isset($uid)) || (!isset($payer_email)) ||
             (!isset($txn_id))) {
-            throw new NotFoundHttpException($this->__('Variable error in _enter_transaction'));
-            ;
+            throw new NotFoundHttpException($this->trans('Variable error in _enter_transaction'));
         }
 
         //see if we can find an item with the same txn_id in the
@@ -329,8 +349,11 @@ class SubscribeController extends AbstractController {
      * getsub find the subscription data
      * again this is a duplicate function to what is in pnuserapi. I have to do
      * this because when calling from paypal it will not jump to another file.
+     *
+     * @param int $item_number
+     * @return array
      */
-    private function _get_sub($item_number) {
+    private function _get_sub(int $item_number) : array {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         if (isset($item_number) && is_numeric($item_number)) {
@@ -339,13 +362,13 @@ class SubscribeController extends AbstractController {
             $qb->setParameter(1, $item_number);
         } else {
             //either both are missing or there is a argument error.
-            throw new NotFoundHttpException($this->__('item_number incorrect in WebsiteFeeModule::_get_sub()'));
+            throw new NotFoundHttpException($this->trans('item_number incorrect in WebsiteFeeModule::_get_sub()'));
         }
         $query = $qb->getQuery();
         $the_item = $query->getResult();
 
         if (empty($the_item)) {
-            throw new NotFoundHttpException($this->__('Unable to get subscriber.'));
+            throw new NotFoundHttpException($this->trans('Unable to get subscriber.'));
         }
         return $the_item[0];
     }

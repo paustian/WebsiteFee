@@ -64,7 +64,7 @@ class IpnListener {
      *
      *  @param  string  The post data as a URL encoded string
      */
-    protected function curlPost($encoded_data) {
+    protected function curlPost(string $encoded_data) : void {
 
         $uri = $this->getPaypalHost();
 
@@ -91,8 +91,10 @@ class IpnListener {
         curl_close($ch);
     }
 
-
-    private function getPaypalHost() {
+    /**
+     * @return string
+     */
+    private function getPaypalHost() : string {
         if ($this->use_sandbox)
             return self::SANDBOX_HOST;
         else
@@ -108,7 +110,7 @@ class IpnListener {
      *
      *  @return string
      */
-    public function getPostUri() {
+    public function getPostUri() : string {
         return $this->post_uri;
     }
 
@@ -120,7 +122,7 @@ class IpnListener {
      *
      *  @return string
      */
-    public function getResponse() {
+    public function getResponse() :string {
         return $this->response;
     }
 
@@ -132,7 +134,7 @@ class IpnListener {
      *
      *  @return string
      */
-    public function getResponseStatus() {
+    public function getResponseStatus() : string {
         return $this->response_status;
     }
 
@@ -145,7 +147,7 @@ class IpnListener {
      *
      *  @return string
      */
-    public function getTextReport() {
+    public function getTextReport() : string {
 
         $r = '';
 
@@ -187,7 +189,7 @@ class IpnListener {
      *
      *  @return boolean
      */
-    public function processIpn($post_data = null) {
+    public function processIpn($post_data = null) : bool {
 
         $encoded_data = 'cmd=_notify-validate';
 
@@ -243,7 +245,7 @@ class IpnListener {
      *  Throws an exception and sets a HTTP 405 response header if the request
      *  method was not POST.
      */
-    public function requirePostMethod() {
+    public function requirePostMethod() : void {
         // require POST requests
         if ($_SERVER['REQUEST_METHOD'] && $_SERVER['REQUEST_METHOD'] != 'POST') {
             header('Allow: POST', true, 405);

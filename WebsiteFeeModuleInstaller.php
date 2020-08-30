@@ -14,7 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule;
 
-use Zikula\Core\AbstractExtensionInstaller;
+use Zikula\ExtensionsModule\Installer\AbstractExtensionInstaller;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
@@ -36,7 +36,7 @@ class WebsiteFeeModuleInstaller extends AbstractExtensionInstaller {
      * @author       Timothy Paustian
      * @return       bool       true on success, false otherwise
      */
-    public function install() {
+    public function install() : bool{
         try {
             $this->schemaTool->create($this->entities);
         } catch (\Exception $e) {
@@ -56,7 +56,7 @@ class WebsiteFeeModuleInstaller extends AbstractExtensionInstaller {
      * @author       Timothy Paustian
      * @return       bool       true on success, false otherwise
      */
-    public function upgrade($oldversion) {
+    public function upgrade($oldversion) : bool {
         //right now there are no old versions
         // Upgrade dependent on old version number
         switch ($oldversion) {
@@ -77,7 +77,7 @@ class WebsiteFeeModuleInstaller extends AbstractExtensionInstaller {
      * @author       Timothy Paustian
      * @return       bool       true on success, false otherwise
      */
-    public function uninstall() {
+    public function uninstall() : bool {
         try {
             $this->schemaTool->drop($this->entities);
         } catch (\PDOException $e) {

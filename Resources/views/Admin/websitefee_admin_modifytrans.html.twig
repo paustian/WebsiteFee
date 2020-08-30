@@ -3,12 +3,12 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>{{ __('User Name') }}</th>
-                <th>{{ __('Transaction ID') }}</th>
-                <th>{{ __('Transaction Type') }}</th>
-                <th>{{ __('Email') }}</th>
-                <th>{{ __('Date') }}</th>
-                <th> {{ __('Actions') }}</th>
+                <th>{{ 'User Name' | trans }}</th>
+                <th>{{ 'Transaction ID' | trans }}</th>
+                <th>{{ 'Transaction Type' | trans }}</th>
+                <th>{{ 'Email' | trans }}</th>
+                <th>{{ 'Date' | trans }}</th>
+                <th> {{ 'Actions' | trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -27,7 +27,7 @@
         </tbody>
     </table>
          <form action="{{ path('paustianwebsitefeemodule_admin_deletetrans') }}" method='POST'>
-            <button type='submit' name='deleteAll' value='deleteAll'>{{ __('Delete All') }}</button>
+            <button type='submit' name='deleteAll' value='deleteAll'>{{ 'Delete All' | trans }}</button>
         </form>
 </div>
 {{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}

@@ -14,6 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule\Entity;
 
+use Symfony\Component\Validator\Constraints\DateTime;
 use Zikula\Core\Doctrine\EntityAccess;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -76,51 +77,51 @@ class WebsiteFeeTransEntity extends EntityAccess {
      */
     private $wsfsubtype;
     
-    public function getId() {
+    public function getId() : int {
         return $this->id;
     }
 
-    public function getWsfusername() {
+    public function getWsfusername() : string {
         return $this->wsfusername;
     }
 
-    public function getWsftxid() {
+    public function getWsftxid() : string {
         return $this->wsftxid;
     }
 
-    public function getWsfemail() {
+    public function getWsfemail() : string {
         return $this->wsfemail;
     }
 
-    public function getWsfpaydate() {
+    public function getWsfpaydate() : datetime {
         return $this->wsfpaydate;
     }
 
-    public function getWsfsubtype() {
+    public function getWsfsubtype() : string {
         return $this->wsfsubtype;
     }
 
-    public function setId($id) {
+    public function setId(int $id) : void {
         $this->id = $id;
     }
 
-    public function setWsfusername($wsfusername) {
+    public function setWsfusername(string $wsfusername) : void {
         $this->wsfusername = $wsfusername;
     }
 
-    public function setWsftxid($wsftxid) {
+    public function setWsftxid(string $wsftxid) : void {
         $this->wsftxid = $wsftxid;
     }
 
-    public function setWsfemail($wsfemail) {
+    public function setWsfemail(string $wsfemail) : void {
         $this->wsfemail = $wsfemail;
     }
 
-    public function setWsfpaydate($wsfpaydate) {
+    public function setWsfpaydate(datetime $wsfpaydate) : void {
         $this->wsfpaydate = $wsfpaydate;
     }
 
-    public function setWsfsubtype($wsfsubtype) {
+    public function setWsfsubtype(string $wsfsubtype) : void {
         $this->wsfsubtype = $wsfsubtype;
     }
 }

@@ -14,7 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule\Entity;
 
-use Zikula\Core\Doctrine\EntityAccess;
+use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -85,51 +85,51 @@ class WebsiteFeeSubsEntity extends EntityAccess {
      */
     private $wsfgroupid;
 
-    public function getId() {
+    public function getId() : int {
         return $this->id;
     }
 
-    public function getWsfsubsname() {
+    public function getWsfsubsname() : string {
         return $this->wsfsubsname;
     }
 
-    public function getWsfitem() {
+    public function getWsfitem() : int {
         return $this->wsfitem;
     }
 
-    public function getWsfpaymentamount() {
+    public function getWsfpaymentamount() : int {
         return $this->wsfpaymentamount;
     }
 
-    public function getWsfemail() {
+    public function getWsfemail() : string {
         return $this->wsfemail;
     }
 
-    public function getWsfgroupid() {
+    public function getWsfgroupid() : int {
         return $this->wsfgroupid;
     }
     
-    public function setId($id) {
+    public function setId(int $id) : void {
         $this->id = $id;
     }
 
-    public function setWsfsubsname($wsfsubsname) {
+    public function setWsfsubsname(string $wsfsubsname) : void {
         $this->wsfsubsname = $wsfsubsname;
     }
 
-    public function setWsfitem($wsfitem) {
+    public function setWsfitem(string $wsfitem) : void {
         $this->wsfitem = $wsfitem;
     }
 
-    public function setWsfpaymentamount($wsfpaymentamount) {
+    public function setWsfpaymentamount(int $wsfpaymentamount) : void {
         $this->wsfpaymentamount = $wsfpaymentamount;
     }
 
-    public function setWsfemail($wsfemail) {
+    public function setWsfemail(string $wsfemail) : void {
         $this->wsfemail = $wsfemail;
     }
 
-    public function setWsfgroupid($wsfgroupid) {
+    public function setWsfgroupid(int $wsfgroupid) : void {
         $this->wsfgroupid = $wsfgroupid;
     }
 }

@@ -2,7 +2,7 @@
 {{ pageSetVar('title', 'Test data for posting') }}
 <div class="container-fluid">
     <h3>
-        {{ __("The WebsiteFeeModule Test Data") }}
+        {{ ("The WebsiteFeeModule Test Data" | trans) }}
     </h3>
     <form action="{{ path('paustianwebsitefeemodule_subscribe_subscribepaypal') }}" method="POST">
             <p><input type="text" name="mc_gross" value="15.83" /></p>

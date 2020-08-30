@@ -1,6 +1,6 @@
 {
     "name": "paustian/WebsiteFee",
-    "version": "3.0",
+    "version": "4.0.0",
     "description": "Module for recieving instant payment notifications from Paypal",
     "type": "zikula-module",
     "license": "LGPL-3.0+",
@@ -14,14 +14,16 @@
         "psr-4": { "Paustian\\WebsiteFeeModule\\": "" }
     },
     "require": {
-        "php": ">5.4.0"
+        "php": ">7.2.5",
+        "zikula/core-bundle": "3.*"
     },
     "extra": {
         "zikula": {
             "url": "websitefeemodule",
             "class": "Paustian\\WebsiteFeeModule\\PaustianWebsiteFeeModule",
-            "core-compatibility": ">=1.5",
+            "core-compatibility": ">=3.0.0",
             "displayname": "WebsiteFee Module",
+            "icon": "fas fa-money-bill-wave-alt",
             "capabilities": {
               "admin": {"route": "paustianwebsitefeemodule_admin_edit"}
             },

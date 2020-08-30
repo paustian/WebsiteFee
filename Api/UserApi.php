@@ -24,7 +24,12 @@ namespace Paustian\WebsiteFeeModule\Api;
 
 class UserApi extends \Zikula_AbstractApi {
 
-
+    /**
+     * I don't think this is used anywhere.
+     *
+     * @param $date
+     * @return false|string
+     */
     function date_convert($date) {
         $date_year = substr($date, 0, 4);
         $date_month = substr($date, 5, 2);
