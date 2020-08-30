@@ -1,4 +1,6 @@
 # WebsiteFee
+This is the Zikula 2.0 and below version. A new version for Zikula 3.0 is under development.
+
 ## Synopsis
 WebsiteFee is a Zikula module that enables subscription payments from PayPal and recieves notification by PayPal IPN. Once implemented, a user pays for a subscription and is added to a Zikula group. That group is configured to have special access to the site.
 
