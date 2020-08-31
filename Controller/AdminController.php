@@ -23,13 +23,11 @@ namespace Paustian\WebsiteFeeModule\Controller;
 
 use Zikula\Bundle\CoreBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route; // used in annotations - do not remove
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method; // used in annotations - do not remove
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Annotation\Route; // used in annotations - do not remove
+use Zikula\ThemeModule\Engine\Annotation\Theme; // used in annotations - do not remove
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
@@ -44,7 +42,7 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("")
-     * 
+     * @Theme("admin")
      * show a list of all the transactions
      *
      * @author       Timothy Paustian
@@ -55,12 +53,12 @@ class AdminController extends AbstractController {
         if (!$this->hasPermission('WebsiteFeeModule::', '::', ACCESS_ADMIN)) {
             throw new AccessDeniedException();
         }
-        return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_index.html.twig');
+        return $this->render('@PaustianWebsiteFeeModule/Admin/websitefee_admin_index.html.twig');
     }
 
     /**
      * @Route("/edit/{subscriber}")
-     * 
+     * @Theme("admin")
      * form to add new item
      *
      * create a new subscriber account
@@ -89,11 +87,9 @@ class AdminController extends AbstractController {
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            if ($doMerge) {
-                $em->merge($subscriber);
-            } else {
+            if (!$doMerge) {
                 $em->persist($subscriber);
             }
             $em->flush();
@@ -102,13 +98,13 @@ class AdminController extends AbstractController {
             return $response;
         }
 
-        return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_edit.html.twig', array(
+        return $this->render('@PaustianWebsiteFeeModule/Admin/websitefee_admin_edit.html.twig', array(
                     'form' => $form->createView()));
     }
 
     /**
      * @Route ("/modify")
-     * 
+     * @Theme("admin")
      * modify a subscription
      *
      * Set up a form to present all the exams and let the user choose
@@ -134,12 +130,12 @@ class AdminController extends AbstractController {
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
-        return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_modify.html.twig', ['subs' => $subs]);
+        return $this->render('@PaustianWebsiteFeeModule/Admin/websitefee_admin_modify.html.twig', ['subs' => $subs]);
     }
 
     /**
      * @Route ("/modifytrans")
-     * 
+     * @Theme("admin")
      * modify a subscription
      *
      * Set up a form to present all the exams and let the user choose
@@ -165,12 +161,12 @@ class AdminController extends AbstractController {
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
-        return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_modifytrans.html.twig', ['trans' => $trans]);
+        return $this->render('@PaustianWebsiteFeeModule/Admin/websitefee_admin_modifytrans.html.twig', ['trans' => $trans]);
     }
 
     /**
      * @Route ("/modifyerrs")
-     * 
+     * @Theme("admin")
      * modify a subscription
      *
      * Set up a form to present all the exams and let the user choose
@@ -196,12 +192,12 @@ class AdminController extends AbstractController {
             $response = $this->redirect($this->generateUrl('paustianwebsitefeemodule_admin_index'));
             return $response;
         }
-        return $this->render('PaustianWebsiteFeeModule:Admin:websitefee_admin_modifyerrs.html.twig', ['errors' => $errors]);
+        return $this->render('@PaustianWebsiteFeeModule/Admin/websitefee_admin_modifyerrs.html.twig', ['errors' => $errors]);
     }
 
     /**
      * @Route("delete/{subscriber}")
-     *
+     * @Theme("admin")
      * Delete a subscription.
      *
      * @author       Timothy Paustian
@@ -228,7 +224,7 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("deletetrans/{transaction}")
-     * 
+     * @Theme("admin")
      * Delete accumulated transaction if you want. We do not add these, They are added by communication with
      * PayPal, but we can delete them.
      *
@@ -274,7 +270,7 @@ class AdminController extends AbstractController {
 
     /**
      * @Route("deleteerror/{error}")
-     *
+     * @Theme("admin")
      * @param Request $request
      * @param WebsiteFeeErrorsEntity|null $error
      * @return Response

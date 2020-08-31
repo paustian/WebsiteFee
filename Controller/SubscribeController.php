@@ -1,5 +1,5 @@
 <?php
-I had just finished updaiting this with the required classes and removing ones that are not being used.
+
 /**
  * WebsiteFeeModule Module
  *
@@ -26,8 +26,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route; // used in annotations - do not remove
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method; // used in annotations - do not remove
+use Symfony\Component\Routing\Annotation\Route; // used in annotations - do not remove
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeErrorsEntity;
 use Paustian\WebsiteFeeModule\Entity\WebsiteFeeTransEntity;
 use Paustian\WebsiteFeeModule\Api\IpnListener;
@@ -72,9 +71,9 @@ class SubscribeController extends AbstractController {
      */
     public function testsubscribeAction(Request $request) : Response {
         if($this->debug){
-            return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
+            return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig');
         }
-        return new Response($this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig'));
+        return new Response($this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_index.html.twig'));
     }
 
     /**
@@ -88,7 +87,7 @@ class SubscribeController extends AbstractController {
         if($this->debug){
             $this->_updateGroup(3, 3);
         }
-        return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_index.html.twig');
+        return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_index.html.twig');
     }
 
     /**
@@ -144,7 +143,7 @@ class SubscribeController extends AbstractController {
 
         }
         if($this->debug){
-            return $this->render('PaustianWebsiteFeeModule:Subscribe:websitefee_subscribe_testsubscribe.html.twig');
+            return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig');
         }
         /*$response = new Response();
 

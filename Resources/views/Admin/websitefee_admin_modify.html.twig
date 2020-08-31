@@ -1,4 +1,3 @@
-{{ render(controller('ZikulaAdminModule:Admin:adminheader')) }}
 <div class="container-fluid">
     <table class="table table-striped">
         <thead>
@@ -12,12 +11,11 @@
                 <tr>
                     <td>{{ item.wsfsubsname }}</td>
                     <td class="actions">
-                        <a href="{{ path('paustianwebsitefeemodule_admin_edit', {subscriber: item.id}) }}" class="fa fa-pencil"></a>
-                        <a href="{{ path('paustianwebsitefeemodule_admin_delete', {subscriber: item.id}) }}" class="fa fa-trash-o" onclick="return confirm('Are you sure you want to delete this subscription information?')"></a>
+                        <a href="{{ path('paustianwebsitefeemodule_admin_edit', {subscriber: item.id}) }}" class="fas fa-edit"></a>
+                        <a href="{{ path('paustianwebsitefeemodule_admin_delete', {subscriber: item.id}) }}" class="fas fa-trash" onclick="return confirm('Are you sure you want to delete this subscription information?')"></a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-{{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}

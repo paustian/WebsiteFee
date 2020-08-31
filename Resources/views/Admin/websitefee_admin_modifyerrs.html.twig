@@ -1,4 +1,3 @@
-{{ render(controller('ZikulaAdminModule:Admin:adminheader')) }}
 <div class="container-fluid">
     <table class="table table-striped table-fixed">
         <thead>
@@ -18,7 +17,7 @@
                     <td>{{ item.wsferroeexp }}</td>
                     <td>{{ item.wsferrdate.date }}</td>
                     <td class="actions">
-                        <a href="{{ path('paustianwebsitefeemodule_admin_deleteerror', {error: item.id}) }}" class="fa fa-trash-o" onclick="return confirm('Are you sure you want to delete this subscription information?')"></a>
+                        <a href="{{ path('paustianwebsitefeemodule_admin_deleteerror', {error: item.id}) }}" class="fas fa-trash" onclick="return confirm('Are you sure you want to delete this subscription information?')"></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -28,4 +27,3 @@
             <button type='submit' name='deleteAll' value='deleteAll'>{{ 'Delete All' | trans }}</button>
         </form>
 </div>
-{{ render(controller('ZikulaAdminModule:Admin:adminfooter')) }}

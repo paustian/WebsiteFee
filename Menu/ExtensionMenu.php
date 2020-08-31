@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-namespace Paustian\QuickcheckModule\Menu;
+namespace Paustian\WebsiteFeeModule\Menu;
 
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
