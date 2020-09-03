@@ -32,7 +32,7 @@ class WebsiteFeeSubsEntity extends EntityAccess {
      * WebsiteFeeSubs id
      *
      * @ORM\Id
-     * @ORM\Column(type="integer", length=20)
+     * @ORM\Column(type="integer", length=11)
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -48,7 +48,7 @@ class WebsiteFeeSubsEntity extends EntityAccess {
     /**
      * wsfitem item number that is ordered
      *
-     * @ORM\Column(type="integer", length=20)
+     * @ORM\Column(type="integer", length=11)
      * @Assert\Type(
      *     type="integer",
      *     message="The value {{ value }} is not a valid {{ type }}.")
@@ -67,7 +67,7 @@ class WebsiteFeeSubsEntity extends EntityAccess {
     private $wsfpaymentamount;
     
     /**
-     * WebsiteFeeSubs wsfsubsname -- the name of the subscription.
+     * WebsiteFeeSubs wsfemail -- the name of the subscription.
      * @ORM\Column(type="string", length=255)
      * @Assert\Email(message = "The email '{{ value }}' is not a valid email.")
      * 
@@ -117,7 +117,7 @@ class WebsiteFeeSubsEntity extends EntityAccess {
         $this->wsfsubsname = $wsfsubsname;
     }
 
-    public function setWsfitem(string $wsfitem) : void {
+    public function setWsfitem(int $wsfitem) : void {
         $this->wsfitem = $wsfitem;
     }
 

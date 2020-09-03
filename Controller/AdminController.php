@@ -89,6 +89,7 @@ class AdminController extends AbstractController {
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
             if (!$doMerge) {
                 $em->persist($subscriber);
             }

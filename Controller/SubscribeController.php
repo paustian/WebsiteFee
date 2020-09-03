@@ -21,6 +21,7 @@
 
 namespace Paustian\WebsiteFeeModule\Controller;
 
+use Paustian\WebsiteFeeModule\Entity\WebsiteFeeSubsEntity;
 use Zikula\Bundle\CoreBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -166,7 +167,7 @@ class SubscribeController extends AbstractController {
     private function _cancelSubscription(int $uid, int $item_no) : void {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
-
+        $e = "";
         if (!$this->_modifyUser($gid, $uid, false, $e)) {
             //write an error to the error log;
             $this->_set_error("Unable to cancel subscription: $e");
@@ -176,6 +177,7 @@ class SubscribeController extends AbstractController {
     private function _addSubscription(int $uid, int $item_no) : void {
         $subscription = $this->_get_sub($item_no);
         $gid = $subscription->getWsfgroupid();
+        $e = "";
         if (!$this->_modifyUser($gid, $uid, true, $e)) {
             //write an error to the error log;
             $this->_set_error("Unable to add subscription: $e");
@@ -303,7 +305,7 @@ class SubscribeController extends AbstractController {
 
         //now grab the data out of the subsciption table
         $subscript_info = $this->_get_sub($item_number);
-        if ($subscript_info == null) {
+        if (empty($subscript_info)) {
             $this->_set_error("No item for the item number. Check your subscription setup to insure that your Subscription Item Number matches what you are putting in your paypal button");
             return false;
         }
@@ -314,18 +316,19 @@ class SubscribeController extends AbstractController {
             $this->_set_error("Incorrect reciever Email:" . $receiver_email . ", correct Email should be:" . $email);
             return false;
         }
+        if($subscr_type !== "subscr_cancel"){
+            $payment_amt = $subscript_info->getWsfpaymentamount();
+            //I added a range because Paypal was being cute and adding tax
+            if (($payment_gross == -1) || ((($payment_amt - 2) < $payment_gross) && (($payment_amt + 2) > $payment_gross))) {
+                $payment_gross = $payment_amt;
+            }
 
-        $payment_amt = $subscript_info->getWsfpaymentamount();
-        //I added a range because Paypal was being cute and adding tax
-        if (($payment_gross == -1) || ((($payment_amt - 2) < $payment_gross) && (($payment_amt + 2) > $payment_gross))) {
-            $payment_gross = $payment_amt;
-        }
-
-        // check that payment_amount/payment_currency are correct
-        if ($payment_gross != $payment_amt) {
-            //wrong amount payed
-            $this->_set_error("payment inccorect: " . $payment_gross . ", correct amount should be: " . $payment_amt);
-            return false;
+            // check that payment_amount/payment_currency are correct
+            if ($payment_gross != $payment_amt) {
+                //wrong amount payed
+                $this->_set_error("payment inccorect: " . $payment_gross . ", correct amount should be: " . $payment_amt);
+                return false;
+            }
         }
 
         $transaction = new WebsiteFeeTransEntity();
@@ -352,7 +355,7 @@ class SubscribeController extends AbstractController {
      * @param int $item_number
      * @return array
      */
-    private function _get_sub(int $item_number) : array {
+    private function _get_sub(int $item_number) : ?WebsiteFeeSubsEntity {
         $em = $this->getDoctrine()->getManager();
         $qb = $em->createQueryBuilder();
         if (isset($item_number) && is_numeric($item_number)) {
@@ -367,7 +370,7 @@ class SubscribeController extends AbstractController {
         $the_item = $query->getResult();
 
         if (empty($the_item)) {
-            throw new NotFoundHttpException($this->trans('Unable to get subscriber.'));
+            return null;
         }
         return $the_item[0];
     }

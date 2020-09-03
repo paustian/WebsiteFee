@@ -14,7 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule\Entity;
 
-use Symfony\Component\Validator\Constraints\DateTime;
+use DateTime;
 use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -86,7 +86,7 @@ class WebsiteFeeErrorsEntity extends EntityAccess {
         return $this->wsferroeexp;
     }
 
-    public function getWsferrdate() : datetime {
+    public function getWsferrdate() : DateTime {
         return $this->wsferrdate;
     }
 
@@ -106,7 +106,7 @@ class WebsiteFeeErrorsEntity extends EntityAccess {
         $this->wsferroeexp = $wsferroeexp;
     }
 
-    public function setWsferrdate(datetime $wsferrdate) : void  {
+    public function setWsferrdate(DateTime $wsferrdate) : void  {
         $this->wsferrdate = $wsferrdate;
     }
 

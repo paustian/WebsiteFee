@@ -14,7 +14,7 @@
 
 namespace Paustian\WebsiteFeeModule\Entity;
 
-use Symfony\Component\Validator\Constraints\DateTime;
+use DateTime;
 use Zikula\Bundle\CoreBundle\Doctrine\EntityAccess;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -93,7 +93,7 @@ class WebsiteFeeTransEntity extends EntityAccess {
         return $this->wsfemail;
     }
 
-    public function getWsfpaydate() : datetime {
+    public function getWsfpaydate() : DateTime {
         return $this->wsfpaydate;
     }
 
@@ -117,7 +117,7 @@ class WebsiteFeeTransEntity extends EntityAccess {
         $this->wsfemail = $wsfemail;
     }
 
-    public function setWsfpaydate(datetime $wsfpaydate) : void {
+    public function setWsfpaydate(DateTime $wsfpaydate) : void {
         $this->wsfpaydate = $wsfpaydate;
     }
 

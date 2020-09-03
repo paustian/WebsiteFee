@@ -1,28 +1,26 @@
 {% form_theme form '@ZikulaFormExtension/Form/bootstrap_4_zikula_admin_layout.html.twig' %}
-<div class="container-fluid">
-    <div class="row">
-        <h3>
-            <span class="fa fa-edit"></span>
-            {{ "Edit a Subscription" | trans }}
-        </h3>
-        <p>{{ "Fill in the details for a subscription. This is the data PayPal will check against for adding subscriptions. The group ID is the group to which the user should be added." | trans }}</p>
-        {{ showflashes() }}
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-        <fieldset>
-            <legend>{{ 'Subscriber' | trans }}</legend>
-            {{ form_row(form.wsfsubsname) }}
-            {{ form_row(form.wsfitem) }}
-            {{ form_row(form.wsfpaymentamount) }}
-            {{ form_row(form.wsfemail) }}
-            {{ form_row(form.wsfgroupid) }}
-        </fieldset>
-        <div class="form-group">
-            <div class="col-lg-offset-3 col-lg-9">
-                {{ form_widget(form.save, {'attr': {'class': 'btn btn-success'}}) }}
-                {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-cancel'}}) }}
-            </div>
-        </div>
-        {{ form_end(form) }}
+
+<h3>
+    <span class="fa fa-edit"></span>
+    {{ "Edit a Subscription" | trans }}
+</h3>
+<p>{{ "Fill in the details for a subscription. This is the data PayPal will check against for adding subscriptions. The group ID is the group to which the user should be added." | trans }}</p>
+{{ showflashes() }}
+{{ form_start(form) }}
+{{ form_errors(form) }}
+<fieldset>
+    <legend>{{ 'Subscriber' | trans }}</legend>
+    {{ form_row(form.wsfsubsname) }}
+    {{ form_row(form.wsfitem) }}
+    {{ form_row(form.wsfpaymentamount) }}
+    {{ form_row(form.wsfemail) }}
+    {{ form_row(form.wsfgroupid) }}
+</fieldset>
+<div class="form-group">
+    <div class="col-lg-offset-3 col-lg-9">
+        {{ form_widget(form.save, {'attr': {'class': 'btn btn-success'}}) }}
+        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-cancel'}}) }}
     </div>
-    </div>
+</div>
+{{ form_end(form) }}
+

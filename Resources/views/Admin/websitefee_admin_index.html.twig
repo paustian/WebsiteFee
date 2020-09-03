@@ -1,6 +1,4 @@
-<div class="container-fluid">
-    <p>{{ 'Welcome to the administration interface for the WebsiteFeeModule module. The only item you set up from here is ' | trans }}
-        <a href="{{ path('paustianwebsitefeemodule_admin_edit') }}">{{ 'subscriptions' | trans }}</a>. {{' The rest of the interaction is
-        done through an interface with paypal. Go to PayPals' | trans }} <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_button-management">{{'button creation tool' | trans }}</a>
-        {{ ' to create your button. Remember to add the custom parameter with the user id in it' | trans }}</p>
-</div>
+<p>{{ 'Welcome to the administration interface for the WebsiteFeeModule module. The only item you set up from here is ' | trans }}
+    <a href="{{ path('paustianwebsitefeemodule_admin_edit') }}">{{ 'subscriptions' | trans }}</a>. {{' The rest of the interaction is
+    done through an interface with paypal. Go to PayPals' | trans }} <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_button-management">{{'button creation tool' | trans }}</a>
+    {{ ' to create your button. Remember to add the custom parameter with the user id in it' | trans }}</p>
