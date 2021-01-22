@@ -73,20 +73,23 @@ class IpnListener {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $encoded_data);
+        curl_setopt($ch, CURLOPT_SSLVERSION, 6);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
-        curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__) . "/cacert.pem");
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent: PHP-IPN-Verification-Script', 'Connection: Close'));
+        $cert_directory = dirname(__FILE__) . "/cacert.pem";
+        curl_setopt($ch, CURLOPT_CAINFO, $cert_directory);
 
         $this->response = curl_exec($ch);
         $this->response_status = strval(curl_getinfo($ch, CURLINFO_HTTP_CODE));
 
-        if ($this->response === false || $this->response_status == '0') {
+        if (! ($this->response) || ($this->response_status == '0') ) {
             $errno = curl_errno($ch);
             $errstr = curl_error($ch);
             curl_close($ch);
-            throw new Exception("cURL error: [$errno] $errstr");
+            throw new Exception("cURL error: [$errno] $errstr $cert_directory $uri");
         }
         curl_close($ch);
     }
@@ -202,11 +205,17 @@ class IpnListener {
                 foreach($ray_post_array as $keyval){
                     $keyval = explode('=', $keyval);
                     if(count($keyval) == 2){
+                        if ($keyval[0] === 'payment_date') {
+                            if (substr_count($keyval[1], '+') === 1) {
+                                $keyval[1] = str_replace('+', '%2B', $keyval[1]);
+                            }
+                        }
                         $myPost[$keyval[0]] = urldecode($keyval[1]);
                     }
                 }
-                foreach($myPost as $key => $value){
-                    $encoded_data .= "&$key=" . urlencode($value);
+                foreach ($myPost as $key => $value) {
+                    $value = urlencode($value);
+                    $encoded_data .= "&$key=$value";
                 }
                 $this->entryData = $encoded_data;
             } else {
@@ -215,7 +224,6 @@ class IpnListener {
         } else {
             // use provided data array
             $this->post_data = $post_data;
-
             foreach ($this->post_data as $key => $value) {
                 $encoded_data .= "&$key=" . urlencode($value);
             }
@@ -226,13 +234,14 @@ class IpnListener {
         } else {
             $this->curlPost($encoded_data);
         }
-        if (strpos($this->response_status, '200') === false) {
+
+        if ($this->response_status !== '200') {
             throw new Exception("Invalid response status: " . $this->response_status . $encoded_data);
         }
 
-        if (strpos($this->response, "VERIFIED") !== false) {
+        if ($this->response === "VERIFIED") {
             return true;
-        } elseif (strpos($this->response, "INVALID") !== false) {
+        } elseif ($this->response === "INVALID") {
             return false;
         } else {
             throw new Exception("Unexpected response from PayPal. " . $encoded_data);

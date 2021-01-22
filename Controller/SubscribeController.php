@@ -44,7 +44,7 @@ class SubscribeController extends AbstractController {
     private $response;
     private $request;
     private $listener;
-    private $debug = true;
+    private $debug = false;
 
     /**
      * @Route("")
@@ -73,7 +73,7 @@ class SubscribeController extends AbstractController {
     public function testsubscribeAction(Request $request) : Response {
         if($this->debug){
             return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig',
-            ['txnID' => bin2hex(random_bytes(8))]);
+                ['txnID' => bin2hex(random_bytes(8))]);
         }
         return new Response($this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_index.html.twig'));
     }
@@ -117,7 +117,9 @@ class SubscribeController extends AbstractController {
             $this->_set_error($e->getMessage());
             exit(0);
         }
-        if ($verified || $this->listener->use_sandbox) {
+        $this->response = $this->listener->getResponse();
+
+        if ($verified) {
             $uid = $request->get('custom');
             $txn_id = $request->get('txn_id');
             $reciever_email = urldecode($request->get('receiver_email'));
@@ -129,7 +131,7 @@ class SubscribeController extends AbstractController {
             $this->response = $this->listener->getResponse();
             $this->request = $this->listener->getPostUri();
             //enter transcaction makes sure it has all the information that we need
-            if ($this->_enterTransaction($uid, $txn_id, $payer_email, $reciever_email, $payment_gross, $item_no, $txn_type)) {
+            if ($this->_enterTransaction((int)$uid, $txn_id, $payer_email, $reciever_email, $payment_gross, $item_no, $txn_type)) {
                 if ($txn_type === 'subscr_cancel') {
                     $this->_cancelSubscription($uid, $item_no);
                 } else if (($txn_type === 'subscr_payment' && $payment_status === 'Completed') || ($txn_type == 'web_accept')) {
@@ -144,6 +146,7 @@ class SubscribeController extends AbstractController {
             $this->_set_error("Transaction not verified.");
 
         }
+
         if($this->debug){
             return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig');
         }
@@ -282,7 +285,6 @@ class SubscribeController extends AbstractController {
             (!isset($txn_id))) {
             throw new NotFoundHttpException($this->trans('Variable error in _enter_transaction'));
         }
-
         //see if we can find an item with the same txn_id in the
         //database. If we can this is a problem.
         $em = $this->getDoctrine()->getManager();
@@ -292,6 +294,8 @@ class SubscribeController extends AbstractController {
         $qb->where('u.wsftxid = ?1');
         $qb->setParameter(1, $txn_id);
         $query = $qb->getQuery();
+
+
         // execute query
         $dup_trans = $query->getResult();
 
@@ -317,6 +321,7 @@ class SubscribeController extends AbstractController {
             $this->_set_error("Incorrect reciever Email:" . $receiver_email . ", correct Email should be:" . $email);
             return false;
         }
+
         if($subscr_type !== "subscr_cancel"){
             $payment_amt = $subscript_info->getWsfpaymentamount();
             //I added a range because Paypal was being cute and adding tax
@@ -345,6 +350,7 @@ class SubscribeController extends AbstractController {
         $em->flush();
         //Just record the information for now. Get rid of this code later
         $this->_set_error("transaction worked.");
+
         return true;
     }
 

@@ -16,7 +16,7 @@
                 <td>{{ item.wsftxid }}</td>
                 <td>{{ item.wsfsubtype }}</td>
                 <td>{{ item.wsfemail }}</td>
-                <td>{{ item.wsfpaydate.date }}</td>
+                <td>{{ item.wsferrdate | date('Y-m-d') }}</td>
                 <td class="actions">
                     <a href="{{ path('paustianwebsitefeemodule_admin_deletetrans') }}/{{ item.id }}" class="fas fa-trash" onclick="return confirm('Are you sure you want to delete this subscription information?')"></a>
                 </td>
