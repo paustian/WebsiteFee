@@ -44,7 +44,7 @@ class SubscribeController extends AbstractController {
     private $response;
     private $request;
     private $listener;
-    private $debug = false;
+    private $debug = true;
 
     /**
      * @Route("")
@@ -72,7 +72,8 @@ class SubscribeController extends AbstractController {
      */
     public function testsubscribeAction(Request $request) : Response {
         if($this->debug){
-            return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig');
+            return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig',
+            ['txnID' => bin2hex(random_bytes(8))]);
         }
         return new Response($this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_index.html.twig'));
     }
@@ -116,7 +117,7 @@ class SubscribeController extends AbstractController {
             $this->_set_error($e->getMessage());
             exit(0);
         }
-        if ($verified) {
+        if ($verified || $this->listener->use_sandbox) {
             $uid = $request->get('custom');
             $txn_id = $request->get('txn_id');
             $reciever_email = urldecode($request->get('receiver_email'));
@@ -140,7 +141,7 @@ class SubscribeController extends AbstractController {
         } else {
             //we have an invalid transaction, record it.
             $this->response = $this->listener->getResponse();
-            $this->_set_error("Transaction not verified");
+            $this->_set_error("Transaction not verified.");
 
         }
         if($this->debug){
