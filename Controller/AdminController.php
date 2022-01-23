@@ -48,7 +48,7 @@ class AdminController extends AbstractController {
      * @author       Timothy Paustian
      * @return       Response       The main module admin page.
      */
-    public function indexAction() : Response {
+    public function index() : Response {
         // Security check
         if (!$this->hasPermission('WebsiteFeeModule::', '::', ACCESS_ADMIN)) {
             throw new AccessDeniedException();
@@ -67,7 +67,7 @@ class AdminController extends AbstractController {
      * @author       Timothy Paustian
      * @return       response       The main module admin page.
      */
-    public function editAction(Request $request, WebsiteFeeSubsEntity $subscriber = null) {
+    public function edit(Request $request, WebsiteFeeSubsEntity $subscriber = null) {
         // Security check - important to do this as early as possible to avoid
         // potential security holes or just too much wasted processing
         if (!$this->hasPermission('WebsiteFeeModule::', '::', ACCESS_ADD)) {
@@ -111,7 +111,7 @@ class AdminController extends AbstractController {
      * Set up a form to present all the exams and let the user choose
      * The one to modify
      */
-    public function modifyAction(Request $request) {
+    public function modify(Request $request) {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -142,7 +142,7 @@ class AdminController extends AbstractController {
      * Set up a form to present all the exams and let the user choose
      * The one to modify
      */
-    public function modifytransAction(Request $request) {
+    public function modifytrans(Request $request) {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -173,7 +173,7 @@ class AdminController extends AbstractController {
      * Set up a form to present all the exams and let the user choose
      * The one to modify
      */
-    public function modifyerrsAction(Request $request) {
+    public function modifyerrs(Request $request) {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_EDIT)) {
             throw new AccessDeniedException();
         }
@@ -206,7 +206,7 @@ class AdminController extends AbstractController {
      * @param WebsiteFeeSubsEntity $subscriber
      * @return RedirectResponse
      */
-    public function deleteAction(Request $request, WebsiteFeeSubsEntity $subscriber) : RedirectResponse {
+    public function delete(Request $request, WebsiteFeeSubsEntity $subscriber) : RedirectResponse {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
@@ -233,7 +233,7 @@ class AdminController extends AbstractController {
      * @param WebsiteFeeTransEntity|null $transaction
      * @return Response
      */
-    public function deletetransAction(Request $request, WebsiteFeeTransEntity $transaction = null) : Response {
+    public function deletetrans(Request $request, WebsiteFeeTransEntity $transaction = null) : Response {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }
@@ -276,7 +276,7 @@ class AdminController extends AbstractController {
      * @param WebsiteFeeErrorsEntity|null $error
      * @return Response
      */
-    public function deleteerrorAction(Request $request, WebsiteFeeErrorsEntity $error = null) : Response {
+    public function deleteerror(Request $request, WebsiteFeeErrorsEntity $error = null) : Response {
         if (!$this->hasPermission('WebsiteFeeModule::', "::", ACCESS_DELETE)) {
             throw new AccessDeniedException();
         }

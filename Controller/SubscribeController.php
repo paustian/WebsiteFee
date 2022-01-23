@@ -44,14 +44,14 @@ class SubscribeController extends AbstractController {
     private $response;
     private $request;
     private $listener;
-    private $debug = false;
+    private $debug = true;
 
     /**
      * @Route("")
      *
      * @return Response
      */
-    public function indexAction() : Response {
+    public function index() : Response {
         //securtiy check first
         if (!$this->hasPermission('quickcheck::', '::', ACCESS_OVERVIEW)) {
             throw new AccessDeniedException();
@@ -70,7 +70,7 @@ class SubscribeController extends AbstractController {
      * @param Request $request
      * @return Response
      */
-    public function testsubscribeAction(Request $request) : Response {
+    public function testsubscribe(Request $request) : Response {
         if($this->debug){
             return $this->render('@PaustianWebsiteFeeModule/Subscribe/websitefee_subscribe_testsubscribe.html.twig',
                 ['txnID' => bin2hex(random_bytes(8))]);
@@ -84,7 +84,7 @@ class SubscribeController extends AbstractController {
      * @param Request $request
      * @return Response
      */
-    public function testupdategroupAction(Request $request) : Response {
+    public function testupdategroup(Request $request) : Response {
         //This is a test function to try to debug update group
         if($this->debug){
             $this->_updateGroup(3, 3);
@@ -100,7 +100,7 @@ class SubscribeController extends AbstractController {
      * @return Response
      * @throws Exception
      */
-    public function subscribepaypalAction(Request $request) : Response {
+    public function subscribepaypal(Request $request) : Response {
         $this->listener = new IpnListener();
         $this->paymentDate = urldecode($request->get('payment_date'));
         $paymentDateTmp = strtotime($this->paymentDate);

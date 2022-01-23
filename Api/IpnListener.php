@@ -230,7 +230,7 @@ class IpnListener {
         }
         if ($this->debug) {
             $this->response = "VERIFIED";
-            $this->response_status = '200 OK';
+            $this->response_status = '200';
         } else {
             $this->curlPost($encoded_data);
         }
